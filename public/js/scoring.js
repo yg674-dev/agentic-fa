@@ -1,125 +1,54 @@
 /**
- * scoring.js — Renders the visual scoring UI components:
- *   - Circular SVG score gauge (animated, color-coded)
- *   - Factor breakdown horizontal bars (animated)
- *   - Recommendation card
- *   - Animates score counting up
+ * scoring.js — Renders the visual scoring UI components.
+ *
+ * Uses a large bold number display (not a circular SVG gauge).
+ * Color-coded by score tier: excellent (≥80), good (60-79), moderate (<60).
  */
 
 /**
- * Returns the color for a given score value.
- * Red < 40, Yellow 40–70, Green > 70.
- */
-export function getScoreColor(score) {
-  if (score >= 70) return '#10b981'; // green
-  if (score >= 40) return '#f59e0b'; // yellow
-  return '#ef4444';                  // red
-}
-
-/**
- * Returns the CSS class suffix for a score (for badges).
+ * Returns the CSS class for a score value.
  */
 export function getScoreClass(score) {
-  if (score >= 70) return 'green';
-  if (score >= 40) return 'yellow';
-  return 'red';
+  if (score >= 80) return 'excellent';
+  if (score >= 60) return 'good';
+  return 'moderate';
 }
 
 /**
- * Renders an animated circular SVG gauge into the given container element.
- * @param {HTMLElement} container
- * @param {number} score  0–100
+ * Returns a hex color for a score value (used in progress bar fills).
  */
-export function renderScoreMeter(container, score) {
-  const size = 160;
-  const strokeWidth = 10;
-  const radius = (size / 2) - strokeWidth;
-  // Arc covers 270 degrees (starting from 135deg, going clockwise to 45deg)
-  const circumference = 2 * Math.PI * radius;
-  const arcFraction = 0.75; // 270/360
-  const dashArray = circumference * arcFraction;
-  const dashOffset = dashArray; // start at 0 fill
-
-  const color = getScoreColor(score);
-
-  container.innerHTML = `
-    <div class="score-meter-wrap">
-      <svg
-        class="score-meter-svg"
-        width="${size}"
-        height="${size}"
-        viewBox="0 0 ${size} ${size}"
-        aria-label="Score: ${score}/100"
-      >
-        <!-- Track arc -->
-        <circle
-          class="score-gauge-track"
-          cx="${size / 2}"
-          cy="${size / 2}"
-          r="${radius}"
-          stroke-width="${strokeWidth}"
-          stroke-dasharray="${dashArray} ${circumference}"
-          stroke-dashoffset="${-circumference * 0.125}"
-          transform="rotate(90 ${size / 2} ${size / 2})"
-        />
-        <!-- Fill arc -->
-        <circle
-          class="score-gauge-fill"
-          id="score-gauge-fill"
-          cx="${size / 2}"
-          cy="${size / 2}"
-          r="${radius}"
-          stroke="${color}"
-          stroke-width="${strokeWidth}"
-          stroke-dasharray="${dashArray} ${circumference}"
-          stroke-dashoffset="${dashArray}"
-          transform="rotate(90 ${size / 2} ${size / 2})"
-        />
-        <!-- Score number (animated via JS) -->
-        <text
-          class="score-meter-label"
-          id="score-meter-number"
-          x="${size / 2}"
-          y="${size / 2 - 4}"
-          font-size="30"
-        >0</text>
-        <text
-          class="score-meter-sublabel"
-          x="${size / 2}"
-          y="${size / 2 + 18}"
-          font-size="11"
-        >/ 100</text>
-      </svg>
-      <div class="score-meter-title">Thesis Alignment</div>
-    </div>
-  `;
-
-  // Animate after paint
-  requestAnimationFrame(() => {
-    const fill = container.querySelector('#score-gauge-fill');
-    const numberEl = container.querySelector('#score-meter-number');
-    if (!fill || !numberEl) return;
-
-    // Animate the arc fill
-    const targetOffset = dashArray - (dashArray * (score / 100));
-    // We need to offset by -circumference*0.125 to start at the left bottom (225deg)
-    const baseOffset = circumference * 0.125;
-    fill.style.strokeDashoffset = targetOffset + baseOffset;
-
-    // Animate count-up number
-    animateCounter(numberEl, 0, score, 1200);
-  });
+export function getScoreColor(score) {
+  if (score >= 80) return '#16a34a'; // green-600
+  if (score >= 60) return '#2563eb'; // blue-600
+  return '#9ca3af';                  // gray-400
 }
 
 /**
- * Animates a text element counting from `start` to `end` over `duration` ms.
+ * Returns a progress bar fill CSS class based on score.
+ */
+function getProgressClass(score) {
+  if (score >= 80) return 'progress-fill-green';
+  if (score >= 60) return 'progress-fill-blue';
+  return ''; // default blue
+}
+
+/**
+ * Returns the score category label.
+ */
+function getScoreCategoryLabel(score) {
+  if (score >= 80) return 'Excellent Match';
+  if (score >= 60) return 'Good Match';
+  return 'Moderate Match';
+}
+
+/**
+ * Animates a number element counting from start to end over duration ms.
  */
 function animateCounter(el, start, end, duration) {
   const startTime = performance.now();
   function step(now) {
     const elapsed = now - startTime;
     const progress = Math.min(elapsed / duration, 1);
-    // Ease out cubic
     const eased = 1 - Math.pow(1 - progress, 3);
     el.textContent = Math.round(start + (end - start) * eased);
     if (progress < 1) requestAnimationFrame(step);
@@ -128,77 +57,154 @@ function animateCounter(el, start, end, duration) {
 }
 
 /**
- * Renders the factor breakdown bars into the given container.
- * @param {HTMLElement} container
- * @param {Array} factors  [{name, score, reason}]
+ * Renders the score result into the result panel.
+ * result = { score, explanation, factors: [{name, score, reason}], recommendation }
  */
-export function renderFactorBars(container, factors) {
-  if (!factors || factors.length === 0) {
-    container.innerHTML = '<p class="text-muted text-sm">No factor data available.</p>';
-    return;
+export function renderScoreResult(result) {
+  const { score, explanation, factors, recommendation } = result;
+  const tier = getScoreClass(score);
+
+  // Show result panel
+  const panel = document.getElementById('score-results');
+  if (panel) panel.classList.remove('hidden');
+
+  // Score number (large display)
+  const numberEl = document.getElementById('score-main-number');
+  if (numberEl) {
+    numberEl.className = `score-main-number score-${tier}`;
+    numberEl.textContent = '0';
+    // Animate count-up
+    animateCounter(numberEl, 0, score, 1000);
   }
 
-  container.innerHTML = `
-    <div class="factor-bars">
-      ${factors.map((f, i) => `
-        <div class="factor-bar-item">
-          <div class="factor-bar-header">
-            <span class="factor-bar-name">${f.name}</span>
-            <span class="factor-bar-score" id="factor-score-${i}">${f.score}</span>
-          </div>
-          <div class="factor-bar-track">
-            <div
-              class="factor-bar-fill"
-              id="factor-fill-${i}"
-              style="background: ${getScoreColor(f.score)};"
-            ></div>
-          </div>
-          ${f.reason ? `<div class="factor-bar-reason">${f.reason}</div>` : ''}
-        </div>
-      `).join('')}
-    </div>
-  `;
+  // Score category label
+  const categoryEl = document.getElementById('score-category');
+  if (categoryEl) {
+    categoryEl.className = `score-category score-${tier}`;
+    categoryEl.textContent = getScoreCategoryLabel(score);
+  }
 
-  // Animate bars after paint
-  requestAnimationFrame(() => {
-    factors.forEach((f, i) => {
-      const fill = container.querySelector(`#factor-fill-${i}`);
-      if (fill) {
-        // Stagger each bar slightly
+  // Explanation text
+  const explEl = document.getElementById('score-explanation');
+  if (explEl) {
+    explEl.textContent = explanation || '';
+  }
+
+  // Factor breakdown progress bars
+  const factorsEl = document.getElementById('score-factors');
+  if (factorsEl && factors && factors.length > 0) {
+    factorsEl.innerHTML = factors.map((f, i) => `
+      <div class="factor-item">
+        <div class="factor-header">
+          <span class="factor-name">${escHtml(f.name)}</span>
+          <span class="factor-score">${f.score}/100</span>
+        </div>
+        <div class="progress-track">
+          <div
+            class="progress-fill ${getProgressClass(f.score)}"
+            id="factor-bar-${i}"
+          ></div>
+        </div>
+        ${f.reason ? `<div class="factor-reason">${escHtml(f.reason)}</div>` : ''}
+      </div>
+    `).join('');
+
+    // Animate bars from 0 to value with stagger
+    requestAnimationFrame(() => {
+      factors.forEach((f, i) => {
         setTimeout(() => {
-          fill.style.width = `${f.score}%`;
+          const bar = document.getElementById(`factor-bar-${i}`);
+          if (bar) bar.style.width = `${f.score}%`;
         }, i * 80);
-      }
+      });
     });
-  });
+  }
+
+  // Recommendation box
+  renderRecommendationBox(recommendation);
+
+  // Scroll results into view
+  if (panel) {
+    panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
 }
 
 /**
- * Renders the recommendation card.
- * @param {HTMLElement} container
- * @param {string} recommendation  e.g. "Strong Pursue — rationale"
+ * Renders the recommendation box.
  */
-export function renderRecommendation(container, recommendation) {
-  if (!recommendation) {
-    container.innerHTML = '';
+function renderRecommendationBox(recommendation) {
+  const container = document.getElementById('score-recommendation-container');
+  if (!container || !recommendation) {
+    if (container) container.innerHTML = '';
     return;
   }
 
-  // Determine card style based on recommendation type
   const lower = recommendation.toLowerCase();
-  let cardClass = 'neutral';
-  if (lower.includes('strong pursue') || lower.includes('soft pursue')) cardClass = 'pursue';
-  else if (lower.includes('strong pass') || lower.includes('soft pass')) cardClass = 'pass';
+  let boxClass = 'review';
+  let label = 'Consider';
 
-  // Split label from rationale at the first em-dash or hyphen
+  if (lower.includes('invest') || lower.includes('strong pursue') || lower.includes('pursue')) {
+    boxClass = 'invest';
+    label = 'Invest';
+  } else if (lower.includes('pass') || lower.includes('decline')) {
+    boxClass = 'pass';
+    label = 'Pass';
+  }
+
+  // Split label from rationale
   const parts = recommendation.split(/\s*[—–-]\s*/);
-  const label = parts[0].trim();
-  const rationale = parts.slice(1).join(' — ').trim();
+  const displayLabel = parts.length > 1 ? parts[0].trim() : label;
+  const rationale = parts.length > 1 ? parts.slice(1).join(' — ').trim() : recommendation;
 
   container.innerHTML = `
-    <div class="recommendation-card ${cardClass}">
-      <div class="recommendation-label">${label}</div>
-      <div class="recommendation-text">${rationale || recommendation}</div>
+    <div class="recommendation-box ${boxClass}">
+      <div class="recommendation-label">${escHtml(displayLabel)}</div>
+      <div class="recommendation-text">${escHtml(rationale)}</div>
     </div>
   `;
+}
+
+/**
+ * Clears the score result panel.
+ */
+export function clearScoreResult() {
+  const panel = document.getElementById('score-results');
+  if (panel) panel.classList.add('hidden');
+
+  const numberEl = document.getElementById('score-main-number');
+  if (numberEl) { numberEl.textContent = '–'; numberEl.className = 'score-main-number score-good'; }
+
+  const categoryEl = document.getElementById('score-category');
+  if (categoryEl) { categoryEl.textContent = ''; }
+
+  const explEl = document.getElementById('score-explanation');
+  if (explEl) { explEl.textContent = ''; }
+
+  const factorsEl = document.getElementById('score-factors');
+  if (factorsEl) factorsEl.innerHTML = '';
+
+  const recEl = document.getElementById('score-recommendation-container');
+  if (recEl) recEl.innerHTML = '';
+}
+
+/**
+ * Returns a small inline score display HTML string (for use in cards/lists).
+ * @param {number} score
+ * @returns {string} HTML
+ */
+export function scoreChip(score) {
+  const tier = getScoreClass(score);
+  return `<span class="score-number score-${tier}" style="font-size:20px;font-weight:800;letter-spacing:-0.5px;">${score}</span>`;
+}
+
+/**
+ * Escapes HTML special characters.
+ */
+function escHtml(str) {
+  if (!str) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
 }
