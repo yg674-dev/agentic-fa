@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Agentic FA — AI Deal Copilot</title>
+  <link rel="stylesheet" href="/css/styles.css" />
+  <!-- marked.js for markdown rendering in memo output -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+<body>
+  <div id="app">
+
+    <!-- ================================================================
+         SIDEBAR
+         ================================================================ -->
+    <aside class="sidebar">
+      <div class="sidebar-logo">
+        <h1>Agentic <span>FA</span></h1>
+        <p>Your AI Deal Copilot</p>
+      </div>
+
+      <nav class="sidebar-nav">
+        <span class="nav-label">Overview</span>
+        <button class="nav-item active" data-view="dashboard">
+          <span class="nav-icon">📊</span>
+          Dashboard
+        </button>
+
+        <span class="nav-label">Workflow</span>
+        <button class="nav-item" data-view="score">
+          <span class="nav-icon">⚡</span>
+          Score Deal
+        </button>
+        <button class="nav-item" data-view="memo">
+          <span class="nav-icon">📄</span>
+          IC Memo
+        </button>
+
+        <span class="nav-label">Portfolio</span>
+        <button class="nav-item" data-view="pipeline">
+          <span class="nav-icon">📋</span>
+          Pipeline
+        </button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="api-status">
+          <div class="status-dot" id="api-status-dot"></div>
+          <span id="api-status-text">Checking…</span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ================================================================
+         MAIN CONTENT
+         ================================================================ -->
+    <div class="main-content">
+
+      <!-- Topbar -->
+      <header class="topbar">
+        <span class="topbar-title" id="topbar-title">Dashboard</span>
+        <span class="topbar-subtitle">claude-sonnet-4-6 · Anthropic</span>
+      </header>
+
+      <!-- Content area -->
+      <main class="content-area">
+
+        <!-- ============================================================
+             DASHBOARD VIEW
+             ============================================================ -->
+        <section class="view-section" data-view="dashboard">
+
+          <!-- Stats row -->
+          <div class="grid-4 section">
+            <div class="stat-card">
+              <div class="stat-value" id="stat-total-deals">0</div>
+              <div class="stat-label">Total Deals</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value" id="stat-avg-score">–</div>
+              <div class="stat-label">Avg. Thesis Score</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value" id="stat-memos">0</div>
+              <div class="stat-label">Memos Generated</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value" id="stat-ic-ready">0</div>
+              <div class="stat-label">IC Ready</div>
+            </div>
+          </div>
+
+          <div class="grid-2" style="gap:20px;">
+
+            <!-- Quick-add deal -->
+            <div class="card">
+              <div class="card-title">Quick Score a Deal</div>
+              <div id="quick-alert" class="hidden mb-3"></div>
+              <div class="section" style="display:flex;flex-direction:column;gap:12px;">
+                <div class="form-group">
+                  <label for="quick-company">Company Name</label>
+                  <input type="text" id="quick-company" placeholder="e.g. Stripe, Anduril…" />
+                </div>
+                <div class="form-group">
+                  <label for="quick-description">One-line Description</label>
+                  <textarea id="quick-description" rows="2" placeholder="What does this company do?"></textarea>
+                </div>
+                <button id="quick-add-btn" class="btn btn-primary">
+                  ⚡ Score Deal
+                </button>
+              </div>
+            </div>
+
+            <!-- Recent deals -->
+            <div class="card">
+              <div class="section-header">
+                <div class="section-title">Recent Deals</div>
+                <button class="btn btn-secondary btn-sm" onclick="document.querySelector('[data-view=pipeline]').click()">
+                  View All
+                </button>
+              </div>
+              <div id="recent-deals-list">
+                <div class="empty-state">
+                  <div class="empty-state-icon">🎯</div>
+                  <div class="empty-state-text">No deals scored yet</div>
+                  <div class="empty-state-sub">Use "Score Deal" to get started</div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- ============================================================
+             SCORE DEAL VIEW
+             ============================================================ -->
+        <section class="view-section hidden" data-view="score">
+
+          <div class="grid-2" style="gap:20px;align-items:start;">
+
+            <!-- LEFT: Fund Thesis + Company Input -->
+            <div style="display:flex;flex-direction:column;gap:20px;">
+
+              <!-- Fund thesis config -->
+              <div class="card">
+                <div class="card-title">Fund Thesis</div>
+                <div id="thesis-save-alert" class="hidden mb-3"></div>
+                <div style="display:flex;flex-direction:column;gap:12px;">
+                  <div class="form-group">
+                    <label for="thesis-sector">Sector Focus</label>
+                    <input type="text" id="thesis-sector" placeholder="e.g. Enterprise SaaS, Fintech, Healthcare AI" />
+                  </div>
+                  <div class="form-row">
+                    <div class="form-group">
+                      <label for="thesis-stage">Stage</label>
+                      <select id="thesis-stage">
+                        <option value="">Any</option>
+                        <option value="Pre-Seed">Pre-Seed</option>
+                        <option value="Seed">Seed</option>
+                        <option value="Series A">Series A</option>
+                        <option value="Series B">Series B</option>
+                        <option value="Series C">Series C</option>
+                        <option value="Growth">Growth</option>
+                      </select>
+                    </div>
+                    <div class="form-group">
+                      <label for="thesis-geography">Geography</label>
+                      <input type="text" id="thesis-geography" placeholder="e.g. US, Europe, Global" />
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label for="thesis-check-size">Check Size</label>
+                    <input type="text" id="thesis-check-size" placeholder="e.g. $500K–$2M, $5M–$15M" />
+                  </div>
+                  <div class="form-group">
+                    <label for="thesis-thematic">Thematic Focus</label>
+                    <textarea id="thesis-thematic" rows="2" placeholder="e.g. AI infrastructure, climate tech, future of work…"></textarea>
+                  </div>
+                  <button id="save-thesis-btn" class="btn btn-secondary">
+                    💾 Save Thesis
+                  </button>
+                </div>
+              </div>
+
+              <!-- Company input -->
+              <div class="card">
+                <div class="card-title">Company Details</div>
+                <div id="score-alert" class="hidden mb-3"></div>
+                <div style="display:flex;flex-direction:column;gap:12px;">
+                  <div class="form-group">
+                    <label for="score-company">Company Name *</label>
+                    <input type="text" id="score-company" placeholder="Company name" />
+                  </div>
+                  <div class="form-group">
+                    <label for="score-description">Description *</label>
+                    <textarea id="score-description" rows="3" placeholder="What does the company do? What's the product and value proposition?"></textarea>
+                  </div>
+                  <div class="form-row">
+                    <div class="form-group">
+                      <label for="score-sector">Sector</label>
+                      <input type="text" id="score-sector" placeholder="e.g. Fintech, AI, SaaS" />
+                    </div>
+                    <div class="form-group">
+                      <label for="score-stage">Stage</label>
+                      <select id="score-stage">
+                        <option value="">Unknown</option>
+                        <option value="Pre-Seed">Pre-Seed</option>
+                        <option value="Seed">Seed</option>
+                        <option value="Series A">Series A</option>
+                        <option value="Series B">Series B</option>
+                        <option value="Series C">Series C</option>
+                        <option value="Growth">Growth</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="form-row">
+                    <div class="form-group">
+                      <label for="score-geography">Geography</label>
+                      <input type="text" id="score-geography" placeholder="HQ location / market" />
+                    </div>
+                    <div class="form-group">
+                      <label for="score-ask">Ask Amount</label>
+                      <input type="text" id="score-ask" placeholder="e.g. $5M, $10M" />
+                    </div>
+                  </div>
+                  <button id="score-btn" class="btn btn-primary btn-lg w-full">
+                    ⚡ Score Deal
+                  </button>
+                </div>
+              </div>
+
+              <!-- Deck Analyzer -->
+              <div class="card">
+                <div class="card-title">Deck Analyzer</div>
+                <p class="text-secondary text-sm mb-3">Paste raw pitch deck text and auto-extract company fields.</p>
+                <div id="analyze-alert" class="hidden mb-3"></div>
+                <div class="form-group mb-3">
+                  <label for="deck-text">Pitch Deck Text</label>
+                  <textarea id="deck-text" rows="6" placeholder="Paste text extracted from a pitch deck PDF or slide deck…"></textarea>
+                </div>
+                <button id="analyze-btn" class="btn btn-secondary w-full">
+                  🔍 Analyze Deck
+                </button>
+              </div>
+
+            </div>
+
+            <!-- RIGHT: Score Results -->
+            <div id="score-results" class="hidden" style="display:flex;flex-direction:column;gap:16px;position:sticky;top:0;">
+
+              <!-- Score meter -->
+              <div class="card" style="text-align:center;">
+                <div class="card-title">Thesis Alignment Score</div>
+                <div id="score-meter-container" style="display:flex;justify-content:center;padding:8px 0 16px;"></div>
+                <p id="score-explanation" class="text-secondary text-sm" style="text-align:left;line-height:1.6;"></p>
+              </div>
+
+              <!-- Factor breakdown -->
+              <div class="card">
+                <div class="card-title">Factor Breakdown</div>
+                <div id="score-factors-container"></div>
+              </div>
+
+              <!-- Recommendation -->
+              <div id="score-recommendation-container"></div>
+
+              <!-- Actions -->
+              <div style="display:flex;gap:10px;">
+                <button id="score-to-memo-btn" class="btn btn-primary" style="flex:1;">
+                  📄 Generate IC Memo
+                </button>
+                <button class="btn btn-secondary" onclick="document.querySelector('[data-view=pipeline]').click()">
+                  View Pipeline
+                </button>
+              </div>
+
+            </div>
+
+          </div>
+        </section>
+
+        <!-- ============================================================
+             IC MEMO VIEW
+             ============================================================ -->
+        <section class="view-section hidden" data-view="memo">
+
+          <div class="grid-2" style="gap:20px;align-items:start;">
+
+            <!-- Input form -->
+            <div class="card">
+              <div class="card-title">Deal Information</div>
+              <div id="memo-alert" class="hidden mb-3"></div>
+              <div style="display:flex;flex-direction:column;gap:12px;">
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="memo-company">Company Name *</label>
+                    <input type="text" id="memo-company" placeholder="Company name" />
+                  </div>
+                  <div class="form-group">
+                    <label for="memo-stage">Stage</label>
+                    <select id="memo-stage">
+                      <option value="">Unknown</option>
+                      <option value="Pre-Seed">Pre-Seed</option>
+                      <option value="Seed">Seed</option>
+                      <option value="Series A">Series A</option>
+                      <option value="Series B">Series B</option>
+                      <option value="Series C">Series C</option>
+                      <option value="Growth">Growth</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="memo-description">Description *</label>
+                  <textarea id="memo-description" rows="3" placeholder="What does the company do?"></textarea>
+                </div>
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="memo-sector">Sector</label>
+                    <input type="text" id="memo-sector" placeholder="e.g. Enterprise SaaS" />
+                  </div>
+                  <div class="form-group">
+                    <label for="memo-founders">Founders</label>
+                    <input type="text" id="memo-founders" placeholder="e.g. Jane Doe (ex-Google)" />
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="memo-market-size">Market Size</label>
+                  <input type="text" id="memo-market-size" placeholder="e.g. $50B TAM" />
+                </div>
+                <div class="form-group">
+                  <label for="memo-traction">Traction / Metrics</label>
+                  <textarea id="memo-traction" rows="2" placeholder="ARR, users, growth rate, key customers…"></textarea>
+                </div>
+                <div class="form-group">
+                  <label for="memo-competition">Competition</label>
+                  <textarea id="memo-competition" rows="2" placeholder="Main competitors and differentiation…"></textarea>
+                </div>
+
+                <div style="display:flex;gap:10px;margin-top:4px;">
+                  <button id="memo-btn" class="btn btn-primary btn-lg" style="flex:1;">
+                    📄 Generate IC Memo
+                  </button>
+                  <button id="signals-btn" class="btn btn-secondary btn-lg">
+                    ⚡ Why Now?
+                  </button>
+                </div>
+
+                <div id="signals-alert" class="hidden"></div>
+              </div>
+            </div>
+
+            <!-- Output area -->
+            <div style="display:flex;flex-direction:column;gap:16px;">
+
+              <!-- Signals output (shown after Why Now? click) -->
+              <div id="signals-output" class="hidden">
+                <!-- Populated by renderSignals() -->
+              </div>
+
+              <!-- Memo output section -->
+              <div id="memo-output-section" class="hidden">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+                  <span class="section-title">IC Memo</span>
+                  <div style="display:flex;gap:8px;">
+                    <button id="copy-memo-btn" class="btn btn-secondary btn-sm">
+                      📋 Copy
+                    </button>
+                    <button id="download-memo-btn" class="btn btn-secondary btn-sm">
+                      ⬇ Download .md
+                    </button>
+                  </div>
+                </div>
+                <div class="memo-output" id="memo-output"></div>
+              </div>
+
+            </div>
+          </div>
+        </section>
+
+        <!-- ============================================================
+             PIPELINE VIEW
+             ============================================================ -->
+        <section class="view-section hidden" data-view="pipeline">
+
+          <div class="section-header">
+            <div>
+              <div class="section-title">Deal Pipeline</div>
+              <div class="section-subtitle">All scored deals, sorted by thesis alignment</div>
+            </div>
+            <button class="btn btn-primary" onclick="document.querySelector('[data-view=score]').click()">
+              + Score New Deal
+            </button>
+          </div>
+
+          <div id="pipeline-container">
+            <!-- Populated by renderPipeline() -->
+          </div>
+
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+  <script type="module" src="/js/app.js"></script>
+</body>
+</html>

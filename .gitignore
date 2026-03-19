@@ -1,0 +1,6 @@
+node_modules/
+.env
+*.pptx
+*.pdf
+uploads/
+.DS_Store
