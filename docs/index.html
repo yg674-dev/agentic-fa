@@ -260,6 +260,71 @@ input,textarea,select{font-family:var(--font)}
 ::-webkit-scrollbar{width:5px;height:5px}
 ::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{background:var(--gray-200);border-radius:99px}
+/* ── Mobile ──────────────────────────────────────────────────────────────── */
+.mobile-header{display:none}
+.mobile-bottom-nav{display:none}
+@media(max-width:767px){
+  .app-shell{flex-direction:column;height:100dvh}
+  .sidebar{display:none}
+  /* Mobile top header */
+  .mobile-header{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:14px 16px 10px;
+    background:var(--white);border-bottom:1px solid var(--gray-100);
+    position:sticky;top:0;z-index:100;flex-shrink:0;
+  }
+  .mobile-header-logo{display:flex;align-items:center;gap:8px}
+  .mobile-header-icon{width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,var(--blue-600),var(--purple-600));display:flex;align-items:center;justify-content:center;color:white;flex-shrink:0}
+  .mobile-header-name{font-size:15px;font-weight:700;color:var(--gray-900);letter-spacing:-0.3px}
+  .mobile-header-right{display:flex;align-items:center;gap:8px}
+  /* Main content with bottom nav padding */
+  .main-content{flex:1;overflow-y:auto;padding-bottom:68px}
+  .page{padding:16px}
+  .page-header{margin-bottom:16px}
+  .page-header h1{font-size:18px}
+  .page-header p{font-size:12.5px}
+  /* Stats: 2x2 grid */
+  .stats-grid{grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+  .stat-card{padding:14px}
+  .stat-icon{width:36px;height:36px;border-radius:8px}
+  .stat-value{font-size:22px}
+  /* Dashboard: single column */
+  .dashboard-grid{grid-template-columns:1fr;gap:16px;margin-bottom:16px}
+  .charts-grid{grid-template-columns:1fr;gap:12px}
+  /* Match cards */
+  .match-metrics{grid-template-columns:repeat(3,1fr)}
+  /* Deal flow: single column */
+  .dealflow-grid{grid-template-columns:1fr}
+  .sc-metrics{grid-template-columns:repeat(2,1fr)}
+  /* Matches stats: 3 cols smaller */
+  .matches-stats{gap:8px}
+  /* Score/memo: single column */
+  .score-layout{grid-template-columns:1fr}
+  .memo-layout{grid-template-columns:1fr}
+  .form-row{grid-template-columns:1fr}
+  /* Breakdown: 3 cols instead of 5 */
+  .breakdown-grid{grid-template-columns:repeat(3,1fr)}
+  /* Filters: wrap */
+  .filters-bar{flex-direction:column;align-items:stretch}
+  .search-wrap{min-width:unset}
+  /* Mobile bottom nav */
+  .mobile-bottom-nav{
+    display:flex;position:fixed;bottom:0;left:0;right:0;z-index:200;
+    background:var(--white);border-top:1px solid var(--gray-200);
+    padding:0 0 env(safe-area-inset-bottom,0);
+    box-shadow:0 -2px 8px rgba(0,0,0,0.06);
+  }
+  .mobile-nav-item{
+    flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    gap:3px;padding:8px 4px 10px;cursor:pointer;border:none;background:none;
+    color:var(--gray-400);font-size:10px;font-weight:500;transition:color var(--transition);
+  }
+  .mobile-nav-item svg{width:20px;height:20px;flex-shrink:0}
+  .mobile-nav-item.active{color:var(--blue-600)}
+  .mobile-nav-item span{font-size:10px;line-height:1}
+  /* Hide desktop-only elements */
+  .sc-actions .btn:not(.btn-blue){display:none}
+}
 </style>
 </head>
 <body>
@@ -282,6 +347,39 @@ input,textarea,select{font-family:var(--font)}
     </p>
   </div>
 </div>
+
+<!-- Mobile Top Header -->
+<header class="mobile-header">
+  <div class="mobile-header-logo">
+    <div class="mobile-header-icon">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+    </div>
+    <span class="mobile-header-name">DealFlow AI</span>
+  </div>
+  <div class="mobile-header-right">
+    <button class="btn btn-ghost btn-sm" onclick="showApiKeyModal()" style="padding:5px 8px;font-size:16px;" title="API Key">⚙</button>
+  </div>
+</header>
+
+<!-- Mobile Bottom Nav -->
+<nav class="mobile-bottom-nav" id="mobile-bottom-nav">
+  <button class="mobile-nav-item active" data-view="dashboard">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+    <span>Dashboard</span>
+  </button>
+  <button class="mobile-nav-item" data-view="dealflow">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+    <span>Deal Flow</span>
+  </button>
+  <button class="mobile-nav-item" data-view="matches">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+    <span>AI Matches</span>
+  </button>
+  <button class="mobile-nav-item" data-view="analytics">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+    <span>Analytics</span>
+  </button>
+</nav>
 
 <div class="app-shell">
   <!-- SIDEBAR -->
@@ -687,6 +785,7 @@ async function generateICMemo(data){
 function navigateTo(view){
   state.currentView=view;
   document.querySelectorAll('.nav-item').forEach(el=>el.classList.toggle('active',el.dataset.view===view));
+  document.querySelectorAll('.mobile-nav-item').forEach(el=>el.classList.toggle('active',el.dataset.view===view));
   document.querySelectorAll('.page').forEach(el=>el.classList.toggle('active',el.id===`page-${view}`));
   if(view==='dashboard')renderDashboard();
   if(view==='dealflow')renderDealFlow();
@@ -966,6 +1065,7 @@ function handleDownloadMemo(){
 // ── Init ───────────────────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded',()=>{
   document.querySelectorAll('.nav-item').forEach(el=>{el.addEventListener('click',()=>{const v=el.dataset.view;if(v)navigateTo(v);});});
+  document.querySelectorAll('.mobile-nav-item').forEach(el=>{el.addEventListener('click',()=>{const v=el.dataset.view;if(v)navigateTo(v);});});
   document.querySelectorAll('.tab-btn[data-tab]').forEach(btn=>{btn.addEventListener('click',()=>{state.matchesTab=btn.dataset.tab;document.querySelectorAll('.tab-btn[data-tab]').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderMatches();});});
   document.getElementById('api-key-input').addEventListener('keydown',e=>{if(e.key==='Enter')saveApiKey();});
   navigateTo('dashboard');
