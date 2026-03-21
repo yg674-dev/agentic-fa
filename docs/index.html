@@ -1,0 +1,975 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>DealFlow AI — VC Intelligence Platform</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f9fafb;--white:#ffffff;
+  --gray-50:#f9fafb;--gray-100:#f3f4f6;--gray-200:#e5e7eb;--gray-300:#d1d5db;--gray-400:#9ca3af;--gray-500:#6b7280;--gray-600:#4b5563;--gray-700:#374151;--gray-800:#1f2937;--gray-900:#111827;
+  --blue-50:#eff6ff;--blue-100:#dbeafe;--blue-500:#3b82f6;--blue-600:#2563eb;--blue-700:#1d4ed8;
+  --purple-50:#faf5ff;--purple-100:#f3e8ff;--purple-500:#a855f7;--purple-600:#9333ea;--purple-700:#7e22ce;
+  --green-50:#f0fdf4;--green-100:#dcfce7;--green-500:#22c55e;--green-600:#16a34a;--green-700:#15803d;
+  --yellow-50:#fefce8;--yellow-100:#fef9c3;--yellow-600:#ca8a04;--yellow-700:#a16207;
+  --orange-50:#fff7ed;--orange-600:#ea580c;
+  --red-50:#fef2f2;--red-100:#fee2e2;--red-600:#dc2626;
+  --shadow-sm:0 1px 2px 0 rgba(0,0,0,0.05);
+  --shadow-md:0 4px 6px -1px rgba(0,0,0,0.1),0 2px 4px -2px rgba(0,0,0,0.1);
+  --radius:10px;--radius-sm:6px;
+  --font:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+  --transition:150ms ease;
+}
+html,body{height:100%;background:var(--bg);color:var(--gray-900);font-family:var(--font);font-size:14px;line-height:1.6;-webkit-font-smoothing:antialiased}
+button{cursor:pointer;font-family:var(--font)}
+input,textarea,select{font-family:var(--font)}
+.app-shell{display:flex;height:100vh;overflow:hidden}
+/* Sidebar */
+.sidebar{width:256px;min-width:256px;background:var(--white);border-right:1px solid var(--gray-200);display:flex;flex-direction:column;overflow:hidden;flex-shrink:0}
+.sidebar-logo{padding:20px 20px 16px;border-bottom:1px solid var(--gray-100);display:flex;align-items:center;gap:10px}
+.logo-icon{width:36px;height:36px;border-radius:8px;background:linear-gradient(135deg,var(--blue-600),var(--purple-600));display:flex;align-items:center;justify-content:center;color:white;flex-shrink:0}
+.logo-name{font-size:15px;font-weight:700;color:var(--gray-900);letter-spacing:-0.3px;line-height:1.2}
+.logo-sub{font-size:11px;color:var(--gray-400)}
+.sidebar-nav{flex:1;padding:12px;display:flex;flex-direction:column;gap:2px;overflow-y:auto}
+.nav-item{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:var(--radius-sm);cursor:pointer;color:var(--gray-600);font-size:13.5px;font-weight:500;transition:background var(--transition),color var(--transition);border:none;background:none;width:100%;text-align:left}
+.nav-item:hover{background:var(--gray-100);color:var(--gray-900)}
+.nav-item.active{background:var(--blue-50);color:var(--blue-700)}
+.nav-item svg{width:18px;height:18px;flex-shrink:0;color:inherit}
+.nav-divider{height:1px;background:var(--gray-100);margin:8px 0}
+.sidebar-user{padding:14px 16px;border-top:1px solid var(--gray-100);display:flex;align-items:center;gap:10px}
+.user-avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--blue-600),var(--purple-600));display:flex;align-items:center;justify-content:center;color:white;font-size:13px;font-weight:700;flex-shrink:0}
+.user-name{font-size:13px;font-weight:600;color:var(--gray-900)}
+.user-role{font-size:11px;color:var(--gray-400)}
+/* Main */
+.main-content{flex:1;overflow-y:auto;background:var(--bg)}
+.page{display:none;padding:32px 36px;max-width:1200px}
+.page.active{display:block}
+.page-header{margin-bottom:28px}
+.page-header h1{font-size:22px;font-weight:700;color:var(--gray-900);letter-spacing:-0.4px;display:flex;align-items:center;gap:8px}
+.page-header h1 svg{color:var(--purple-600);width:24px;height:24px}
+.page-header p{font-size:14px;color:var(--gray-500);margin-top:4px}
+/* Cards */
+.card{background:var(--white);border:1px solid var(--gray-200);border-radius:var(--radius);padding:24px;box-shadow:var(--shadow-sm);transition:box-shadow var(--transition)}
+.card:hover{box-shadow:var(--shadow-md)}
+.card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.card-header-title{font-size:15px;font-weight:600;color:var(--gray-900)}
+/* Stats */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:28px}
+.stat-card{background:var(--white);border:1px solid var(--gray-200);border-radius:var(--radius);padding:20px 24px;box-shadow:var(--shadow-sm);display:flex;align-items:flex-start;gap:14px}
+.stat-icon{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.stat-icon svg{width:20px;height:20px}
+.icon-blue{background:var(--blue-50);color:var(--blue-600)}
+.icon-purple{background:var(--purple-50);color:var(--purple-600)}
+.icon-green{background:var(--green-50);color:var(--green-600)}
+.icon-orange{background:var(--orange-50);color:var(--orange-600)}
+.stat-value{font-size:26px;font-weight:700;color:var(--gray-900);letter-spacing:-0.8px;line-height:1.1}
+.stat-label{font-size:12.5px;color:var(--gray-500);margin-top:4px;font-weight:500}
+.stat-delta{font-size:11px;color:var(--green-600);margin-top:2px;font-weight:500}
+/* Dashboard */
+.dashboard-grid{display:grid;grid-template-columns:1fr 360px;gap:20px;margin-bottom:28px}
+.charts-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.section-title{font-size:15px;font-weight:600;color:var(--gray-900);display:flex;align-items:center;gap:7px}
+.section-title svg{width:16px;height:16px}
+/* Match card (dashboard) */
+.match-card{background:var(--white);border:1px solid var(--gray-200);border-radius:var(--radius);padding:16px 18px;display:flex;align-items:flex-start;gap:12px;box-shadow:var(--shadow-sm);transition:box-shadow var(--transition);margin-bottom:10px}
+.match-card:hover{box-shadow:var(--shadow-md)}
+.match-avatar{width:38px;height:38px;border-radius:8px;background:var(--blue-50);border:1px solid var(--blue-100);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;color:var(--blue-700);flex-shrink:0}
+.match-body{flex:1;min-width:0}
+.match-name{font-size:14px;font-weight:600;color:var(--gray-900)}
+.match-badges{display:flex;gap:5px;flex-wrap:wrap;margin-top:4px}
+.match-metrics{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px}
+.mm-label{font-size:10px;color:var(--gray-400);font-weight:500;text-transform:uppercase;letter-spacing:0.4px}
+.mm-value{font-size:12px;font-weight:600;color:var(--gray-800)}
+.match-score-wrap{flex-shrink:0;text-align:center}
+/* Activity */
+.activity-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:var(--radius-sm);transition:background var(--transition)}
+.activity-item:hover{background:var(--gray-50)}
+.act-avatar{width:30px;height:30px;border-radius:50%;background:var(--gray-100);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:var(--gray-600);flex-shrink:0}
+.act-name{font-size:13px;font-weight:600;color:var(--gray-900)}
+.act-meta{font-size:11px;color:var(--gray-400)}
+/* Score display */
+.score-num{font-size:28px;font-weight:800;line-height:1;letter-spacing:-1px}
+.score-lbl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;text-align:center}
+.score-excellent{color:var(--green-600)}
+.score-good{color:var(--blue-600)}
+.score-moderate{color:var(--gray-400)}
+.score-bg-excellent{background:var(--green-50);border:1px solid var(--green-100);border-radius:8px;padding:6px 10px}
+.score-bg-good{background:var(--blue-50);border:1px solid var(--blue-100);border-radius:8px;padding:6px 10px}
+.score-bg-moderate{background:var(--gray-50);border:1px solid var(--gray-200);border-radius:8px;padding:6px 10px}
+/* Badges */
+.badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:99px;font-size:11px;font-weight:600;white-space:nowrap}
+.badge-sector{background:var(--blue-50);color:var(--blue-700);border:1px solid var(--blue-100)}
+.badge-secondary{background:var(--gray-100);color:var(--gray-600)}
+.badge-outline{background:transparent;border:1px solid var(--gray-200);color:var(--gray-600)}
+.badge-new{background:var(--blue-50);color:var(--blue-700)}
+.badge-reviewing{background:var(--yellow-50);color:var(--yellow-700);border:1px solid var(--yellow-100)}
+.badge-due-diligence{background:var(--purple-50);color:var(--purple-700)}
+.badge-term-sheet{background:var(--green-50);color:var(--green-700)}
+.badge-passed{background:var(--gray-100);color:var(--gray-500)}
+/* Deal Flow */
+.dealflow-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.startup-card{background:var(--white);border:1px solid var(--gray-200);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow-sm);transition:box-shadow var(--transition);display:flex;flex-direction:column;gap:12px}
+.startup-card:hover{box-shadow:var(--shadow-md)}
+.sc-header{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.sc-name{font-size:15px;font-weight:700;color:var(--gray-900)}
+.sc-tagline{font-size:12px;color:var(--gray-500);margin-top:2px}
+.sc-badges{display:flex;gap:5px;flex-wrap:wrap}
+.sc-desc{font-size:13px;color:var(--gray-500);line-height:1.5}
+.sc-metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.sc-metric{background:var(--gray-50);border-radius:var(--radius-sm);padding:8px 10px}
+.sc-metric-label{font-size:10px;color:var(--gray-400);font-weight:500;text-transform:uppercase;letter-spacing:0.4px}
+.sc-metric-value{font-size:13px;font-weight:600;color:var(--gray-800);margin-top:2px}
+.sc-funding{display:flex;justify-content:space-between;font-size:13px}
+.sc-actions{display:flex;gap:8px}
+/* AI Insight */
+.ai-insight{background:var(--purple-50);border:1px solid var(--purple-100);border-radius:var(--radius-sm);padding:11px 13px}
+.ai-insight-hdr{display:flex;align-items:center;gap:5px;font-size:10px;font-weight:700;color:var(--purple-700);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:5px}
+.ai-insight-hdr svg{width:12px;height:12px;color:var(--purple-600)}
+.ai-insight p{font-size:12px;color:var(--purple-700);line-height:1.5}
+/* Full Match Cards */
+.matches-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:24px}
+.full-match-card{background:var(--white);border:1px solid var(--gray-200);border-radius:var(--radius);padding:22px;box-shadow:var(--shadow-sm);transition:box-shadow var(--transition);margin-bottom:14px}
+.full-match-card:hover{box-shadow:var(--shadow-md)}
+.fmc-header{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:18px}
+.fmc-name{font-size:17px;font-weight:700;color:var(--gray-900)}
+.fmc-sub{font-size:13px;color:var(--gray-500);margin-top:3px}
+.fmc-badges{display:flex;gap:5px;flex-wrap:wrap;margin-top:7px}
+.breakdown-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:16px}
+.bd-label{font-size:10px;color:var(--gray-400);font-weight:500;text-transform:uppercase;letter-spacing:0.4px;margin-bottom:5px}
+.bd-score{font-size:11px;font-weight:700;color:var(--gray-700);margin-top:3px}
+.fmc-actions{display:flex;gap:8px;margin-top:16px}
+/* Progress */
+.progress-track{height:6px;background:var(--gray-100);border-radius:99px;overflow:hidden;margin-bottom:3px}
+.progress-fill{height:100%;border-radius:99px;width:0%;background:var(--blue-500);transition:width 0.9s cubic-bezier(0.34,1.56,0.64,1)}
+.progress-fill-green{background:var(--green-500)}
+.progress-fill-blue{background:var(--blue-500)}
+/* Tabs */
+.tab-list{display:flex;border-bottom:1px solid var(--gray-200);margin-bottom:20px}
+.tab-btn{padding:9px 16px;font-size:13px;font-weight:500;color:var(--gray-500);cursor:pointer;border:none;background:none;border-bottom:2px solid transparent;margin-bottom:-1px;transition:color var(--transition),border-color var(--transition);white-space:nowrap}
+.tab-btn:hover{color:var(--gray-800)}
+.tab-btn.active{color:var(--blue-600);border-bottom-color:var(--blue-600);font-weight:600}
+/* Score page */
+.score-layout{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start}
+.score-result-panel{display:flex;flex-direction:column;gap:14px}
+.score-display{text-align:center;padding:24px 20px 16px}
+.score-main-number{font-size:72px;font-weight:800;line-height:1;letter-spacing:-3px}
+.score-category{font-size:13px;font-weight:700;margin-top:5px;text-transform:uppercase;letter-spacing:0.8px}
+.score-explanation-text{font-size:13px;color:var(--gray-500);line-height:1.6;text-align:left;padding:0 4px}
+.factors-list{display:flex;flex-direction:column;gap:14px}
+.factor-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px}
+.factor-name{font-size:12px;font-weight:500;color:var(--gray-700)}
+.factor-score{font-size:12px;font-weight:700;color:var(--gray-900)}
+.factor-reason{font-size:11px;color:var(--gray-400);margin-top:3px;line-height:1.4}
+.rec-box{border-radius:var(--radius);padding:14px 16px;border:1px solid}
+.rec-invest{background:var(--green-50);border-color:var(--green-100)}
+.rec-review{background:var(--yellow-50);border-color:var(--yellow-100)}
+.rec-pass{background:var(--red-50);border-color:var(--red-100)}
+.rec-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:4px}
+.rec-invest .rec-label{color:var(--green-700)}
+.rec-review .rec-label{color:var(--yellow-700)}
+.rec-pass .rec-label{color:var(--red-600)}
+.rec-text{font-size:13px;line-height:1.55;color:var(--gray-700)}
+/* Memo */
+.memo-layout{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start}
+.memo-output{background:var(--white);border:1px solid var(--gray-200);border-radius:var(--radius);padding:28px 32px;color:var(--gray-700);line-height:1.8;font-size:14px}
+.memo-output h1{font-size:18px;font-weight:700;color:var(--gray-900);margin-bottom:8px;border-bottom:1px solid var(--gray-200);padding-bottom:10px}
+.memo-output h2{font-size:14px;font-weight:700;color:var(--gray-900);margin-top:20px;margin-bottom:8px}
+.memo-output h3{font-size:13px;font-weight:600;color:var(--gray-700);margin-top:14px;margin-bottom:6px}
+.memo-output p{margin-bottom:10px}
+.memo-output ul,.memo-output ol{padding-left:20px;margin-bottom:10px}
+.memo-output li{margin-bottom:4px}
+.memo-output strong{color:var(--gray-900);font-weight:600}
+.memo-output hr{border:none;border-top:1px solid var(--gray-200);margin:16px 0}
+/* Buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:8px 16px;border-radius:var(--radius-sm);font-size:13px;font-weight:600;border:none;transition:all var(--transition);cursor:pointer;white-space:nowrap;text-decoration:none}
+.btn-primary{background:var(--gray-900);color:white}
+.btn-primary:hover:not(:disabled){background:var(--gray-700)}
+.btn-blue{background:var(--blue-600);color:white}
+.btn-blue:hover:not(:disabled){background:var(--blue-700)}
+.btn-outline{background:var(--white);color:var(--gray-700);border:1px solid var(--gray-200)}
+.btn-outline:hover:not(:disabled){background:var(--gray-50);border-color:var(--gray-300)}
+.btn-ghost{background:transparent;color:var(--gray-600);border:1px solid transparent}
+.btn-ghost:hover:not(:disabled){background:var(--gray-100);color:var(--gray-900)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn-sm{padding:5px 12px;font-size:12px}
+.btn-lg{padding:11px 22px;font-size:14px}
+.btn-full{width:100%}
+.btn svg{width:14px;height:14px;flex-shrink:0}
+/* Forms */
+.form-section{display:flex;flex-direction:column;gap:13px}
+.form-section-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:var(--gray-400)}
+.form-group{display:flex;flex-direction:column;gap:5px}
+.form-group label{font-size:13px;font-weight:500;color:var(--gray-700)}
+.form-group input,.form-group textarea,.form-group select{background:var(--white);border:1px solid var(--gray-200);border-radius:var(--radius-sm);color:var(--gray-900);padding:9px 12px;font-size:13px;transition:border-color var(--transition),box-shadow var(--transition);outline:none;width:100%}
+.form-group input:focus,.form-group textarea:focus,.form-group select:focus{border-color:var(--blue-500);box-shadow:0 0 0 3px var(--blue-50)}
+.form-group textarea{resize:vertical;min-height:78px;line-height:1.5}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:13px}
+/* Checkboxes */
+.checkbox-group{display:flex;flex-wrap:wrap;gap:7px;margin-top:2px}
+.checkbox-pill{display:flex;align-items:center;gap:5px;padding:4px 10px;border:1px solid var(--gray-200);border-radius:99px;font-size:12px;font-weight:500;color:var(--gray-600);cursor:pointer;transition:all var(--transition);user-select:none}
+.checkbox-pill input{width:auto;margin:0;accent-color:var(--blue-600)}
+.checkbox-pill:hover{background:var(--blue-50);border-color:var(--blue-100);color:var(--blue-700)}
+/* Filters */
+.filters-bar{display:flex;gap:10px;align-items:center;margin-bottom:18px;flex-wrap:wrap}
+.search-wrap{position:relative;flex:1;min-width:200px}
+.search-wrap svg{position:absolute;left:10px;top:50%;transform:translateY(-50%);width:14px;height:14px;color:var(--gray-400);pointer-events:none}
+.search-input{width:100%;padding:8px 12px 8px 32px;border:1px solid var(--gray-200);border-radius:var(--radius-sm);background:var(--white);font-size:13px;color:var(--gray-900);outline:none;transition:border-color var(--transition),box-shadow var(--transition)}
+.search-input:focus{border-color:var(--blue-500);box-shadow:0 0 0 3px var(--blue-50)}
+.filter-select{padding:8px 11px;border:1px solid var(--gray-200);border-radius:var(--radius-sm);background:var(--white);font-size:13px;color:var(--gray-700);outline:none;cursor:pointer;transition:border-color var(--transition)}
+.filter-select:focus{border-color:var(--blue-500)}
+/* Charts */
+.chart-bar-container{display:flex;flex-direction:column;gap:9px;padding:4px 0}
+.chart-bar-row{display:flex;align-items:center;gap:8px}
+.chart-bar-label{width:100px;font-size:11px;color:var(--gray-600);text-align:right;flex-shrink:0}
+.chart-bar-track{flex:1;height:24px;background:var(--gray-50);border-radius:5px;overflow:hidden}
+.chart-bar-fill{height:100%;border-radius:5px;display:flex;align-items:center;padding-left:8px;font-size:11px;font-weight:600;color:white;width:0%;transition:width 1s cubic-bezier(0.34,1.56,0.64,1)}
+.chart-pie-container{display:flex;align-items:center;gap:20px}
+.pie-legend{flex:1;display:flex;flex-direction:column;gap:7px}
+.pie-legend-item{display:flex;align-items:center;gap:7px;font-size:12px}
+.pie-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.pie-legend-label{color:var(--gray-600);flex:1}
+.pie-legend-pct{font-weight:600;color:var(--gray-900)}
+/* Empty / Loading */
+.empty-state{text-align:center;padding:44px 24px;color:var(--gray-400)}
+.empty-state svg{width:40px;height:40px;margin:0 auto 12px;display:block}
+.empty-state h3{font-size:14px;font-weight:600;color:var(--gray-600);margin-bottom:5px}
+.empty-state p{font-size:12px}
+.spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,0.3);border-top-color:currentColor;border-radius:50%;animation:spin 0.7s linear infinite;flex-shrink:0}
+.spinner-dark{border:2px solid rgba(0,0,0,0.1);border-top-color:var(--blue-600)}
+@keyframes spin{to{transform:rotate(360deg)}}
+.alert{padding:11px 14px;border-radius:var(--radius-sm);font-size:13px;display:flex;align-items:flex-start;gap:8px;border:1px solid;margin-bottom:14px}
+.alert-error{background:var(--red-50);border-color:var(--red-100);color:var(--red-600)}
+.alert-success{background:var(--green-50);border-color:var(--green-100);color:var(--green-700)}
+.hidden{display:none!important}
+/* Coming soon */
+.coming-soon{text-align:center;padding:60px 24px 40px}
+.coming-soon svg{width:52px;height:52px;color:var(--gray-300);margin:0 auto 14px;display:block}
+.coming-soon h2{font-size:18px;font-weight:700;color:var(--gray-700);margin-bottom:6px}
+.coming-soon p{font-size:13px;color:var(--gray-400);max-width:340px;margin:0 auto}
+/* API Key Modal */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:1000;display:flex;align-items:center;justify-content:center}
+.modal-box{background:var(--white);border-radius:14px;padding:32px;width:440px;max-width:90vw;box-shadow:0 20px 40px rgba(0,0,0,0.15)}
+.modal-title{font-size:17px;font-weight:700;color:var(--gray-900);margin-bottom:8px}
+.modal-desc{font-size:13px;color:var(--gray-500);margin-bottom:20px;line-height:1.6}
+/* Scrollbar */
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--gray-200);border-radius:99px}
+</style>
+</head>
+<body>
+
+<!-- API Key Modal -->
+<div id="api-key-modal" class="modal-overlay hidden">
+  <div class="modal-box">
+    <div class="modal-title">🔑 Enter Anthropic API Key</div>
+    <div class="modal-desc">Your key is stored locally in your browser and only sent directly to Anthropic's API — never to any third-party server.</div>
+    <div class="form-group">
+      <label>API Key</label>
+      <input id="api-key-input" type="password" placeholder="sk-ant-api03-..." style="font-family:monospace;font-size:12px;"/>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:16px;">
+      <button class="btn btn-primary btn-full" onclick="saveApiKey()">Save & Continue</button>
+      <button class="btn btn-outline" onclick="closeApiKeyModal()">Cancel</button>
+    </div>
+    <p style="font-size:11px;color:var(--gray-400);margin-top:12px;text-align:center;">
+      Get your API key at <a href="https://console.anthropic.com" target="_blank" style="color:var(--blue-600);">console.anthropic.com</a>
+    </p>
+  </div>
+</div>
+
+<div class="app-shell">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-logo">
+      <div class="logo-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+      </div>
+      <div>
+        <div class="logo-name">DealFlow AI</div>
+        <div class="logo-sub">VC Intelligence Platform</div>
+      </div>
+    </div>
+    <nav class="sidebar-nav">
+      <button class="nav-item active" data-view="dashboard">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        Dashboard
+      </button>
+      <button class="nav-item" data-view="dealflow">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+        Deal Flow
+      </button>
+      <button class="nav-item" data-view="matches">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        AI Matches
+      </button>
+      <button class="nav-item" data-view="analytics">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        Analytics
+      </button>
+      <div class="nav-divider"></div>
+      <button class="nav-item" data-view="score">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+        Score a Deal
+      </button>
+      <button class="nav-item" data-view="memo">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        IC Memo
+      </button>
+    </nav>
+    <div class="sidebar-user">
+      <div class="user-avatar">CV</div>
+      <div style="flex:1;min-width:0;">
+        <div class="user-name">Catalyst Ventures</div>
+        <div class="user-role">VC Fund</div>
+      </div>
+      <button class="btn btn-ghost btn-sm" onclick="showApiKeyModal()" title="Configure API Key" style="padding:4px 6px;font-size:16px;">⚙</button>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main-content">
+
+    <!-- DASHBOARD -->
+    <div id="page-dashboard" class="page active">
+      <div class="page-header">
+        <h1>Welcome back, Catalyst Ventures</h1>
+        <p>Here's what's happening with your deal flow today.</p>
+      </div>
+      <div class="stats-grid">
+        <div class="stat-card"><div class="stat-icon icon-blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></div><div><div class="stat-value">4</div><div class="stat-label">Active Pipeline</div><div class="stat-delta">↑ 2 this week</div></div></div>
+        <div class="stat-card"><div class="stat-icon icon-purple"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div><div><div class="stat-value">4</div><div class="stat-label">High Matches</div><div class="stat-delta" style="color:var(--gray-400);">80%+ score</div></div></div>
+        <div class="stat-card"><div class="stat-icon icon-green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div><div><div class="stat-value">77</div><div class="stat-label">Avg Match Score</div><div class="stat-delta" style="color:var(--gray-400);">Across 8 startups</div></div></div>
+        <div class="stat-card"><div class="stat-icon icon-orange"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div><div><div class="stat-value">$125M</div><div class="stat-label">Total AUM</div><div class="stat-delta" style="color:var(--gray-400);">24 investments</div></div></div>
+      </div>
+      <div class="dashboard-grid">
+        <div>
+          <div class="section-header">
+            <div class="section-title">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--purple-600)"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              AI Recommended Matches
+            </div>
+            <button class="btn btn-ghost btn-sm" onclick="navigateTo('matches')">View all →</button>
+          </div>
+          <div id="dashboard-top-matches"></div>
+        </div>
+        <div>
+          <div class="section-header"><div class="section-title">Recent Activity</div></div>
+          <div id="dashboard-activity"></div>
+          <button class="btn btn-outline btn-full" style="margin-top:12px;" onclick="navigateTo('dealflow')">View All Deals</button>
+        </div>
+      </div>
+      <div class="charts-grid">
+        <div class="card">
+          <div class="card-header"><div class="card-header-title">Pipeline by Stage</div></div>
+          <div id="chart-pipeline-stage" class="chart-bar-container"></div>
+        </div>
+        <div class="card">
+          <div class="card-header"><div class="card-header-title">Deal Flow by Sector</div></div>
+          <div id="chart-sector" class="chart-pie-container"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- DEAL FLOW -->
+    <div id="page-dealflow" class="page">
+      <div class="page-header">
+        <h1>Deal Flow</h1>
+        <p>Browse and discover startups that match your investment criteria</p>
+      </div>
+      <div class="filters-bar">
+        <div class="search-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input id="dealflow-search" class="search-input" placeholder="Search startups…" oninput="onDealFlowFilter()"/>
+        </div>
+        <select id="dealflow-stage" class="filter-select" onchange="onDealFlowFilter()">
+          <option value="">All Stages</option>
+          <option>Pre-Seed</option><option>Seed</option><option>Series A</option><option>Series B</option>
+        </select>
+        <select id="dealflow-sector" class="filter-select" onchange="onDealFlowFilter()">
+          <option value="">All Sectors</option>
+          <option>FinTech</option><option>HealthTech</option><option>SaaS</option><option>Cybersecurity</option><option>EdTech</option><option>CleanTech</option>
+        </select>
+        <select id="dealflow-sort" class="filter-select" onchange="onDealFlowFilter()">
+          <option value="score-desc">Sort: Match Score ↓</option>
+          <option value="arr-desc">Sort: ARR ↓</option>
+          <option value="growth-desc">Sort: Growth ↓</option>
+          <option value="name-asc">Sort: Name A-Z</option>
+        </select>
+      </div>
+      <div id="dealflow-count" style="font-size:13px;color:var(--gray-500);margin-bottom:14px;"></div>
+      <div id="dealflow-grid" class="dealflow-grid"></div>
+    </div>
+
+    <!-- AI MATCHES -->
+    <div id="page-matches" class="page">
+      <div class="page-header">
+        <h1>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          AI-Powered Matches
+        </h1>
+        <p>Startups ranked by alignment with your fund thesis and investment criteria</p>
+      </div>
+      <div class="matches-stats">
+        <div class="stat-card"><div class="stat-icon icon-green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div><div><div class="stat-value score-excellent" id="match-stat-excellent">-</div><div class="stat-label">Excellent Matches</div><div class="stat-delta" style="color:var(--gray-400);">80%+ score</div></div></div>
+        <div class="stat-card"><div class="stat-icon icon-blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div><div><div class="stat-value score-good" id="match-stat-good">-</div><div class="stat-label">Good Matches</div><div class="stat-delta" style="color:var(--gray-400);">60-79% score</div></div></div>
+        <div class="stat-card"><div class="stat-icon icon-purple"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div><div><div class="stat-value" id="match-stat-total">-</div><div class="stat-label">Total Analyzed</div><div class="stat-delta" style="color:var(--gray-400);">Startups in database</div></div></div>
+      </div>
+      <div class="tab-list">
+        <button class="tab-btn active" data-tab="all">All Matches</button>
+        <button class="tab-btn" data-tab="excellent">Excellent</button>
+        <button class="tab-btn" data-tab="good">Good</button>
+        <button class="tab-btn" data-tab="moderate">Moderate</button>
+      </div>
+      <div id="matches-list"></div>
+    </div>
+
+    <!-- ANALYTICS -->
+    <div id="page-analytics" class="page">
+      <div class="page-header"><h1>Analytics</h1><p>Portfolio performance and deal flow insights</p></div>
+      <div class="coming-soon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        <h2>Analytics Coming Soon</h2>
+        <p>Portfolio performance dashboards, deal velocity metrics, and LP reporting — launching next quarter.</p>
+      </div>
+    </div>
+
+    <!-- SCORE A DEAL -->
+    <div id="page-score" class="page">
+      <div class="page-header">
+        <h1>Score a Deal</h1>
+        <p>Enter your fund thesis and company details to get an AI-powered match score</p>
+      </div>
+      <div id="score-alert"></div>
+      <div class="score-layout">
+        <!-- Left: Forms -->
+        <div style="display:flex;flex-direction:column;gap:16px;">
+          <!-- Fund Thesis -->
+          <div class="card">
+            <div class="card-header"><div class="card-header-title">Fund Thesis</div></div>
+            <div class="form-section" style="gap:14px;">
+              <div class="form-group">
+                <label>Target Sectors</label>
+                <div class="checkbox-group">
+                  <label class="checkbox-pill"><input type="checkbox" name="sector" value="FinTech"/> FinTech</label>
+                  <label class="checkbox-pill"><input type="checkbox" name="sector" value="SaaS"/> SaaS</label>
+                  <label class="checkbox-pill"><input type="checkbox" name="sector" value="HealthTech"/> HealthTech</label>
+                  <label class="checkbox-pill"><input type="checkbox" name="sector" value="AI/ML"/> AI/ML</label>
+                  <label class="checkbox-pill"><input type="checkbox" name="sector" value="Cybersecurity"/> Cybersecurity</label>
+                  <label class="checkbox-pill"><input type="checkbox" name="sector" value="EdTech"/> EdTech</label>
+                  <label class="checkbox-pill"><input type="checkbox" name="sector" value="CleanTech"/> CleanTech</label>
+                </div>
+              </div>
+              <div class="form-group">
+                <label>Target Stages</label>
+                <div class="checkbox-group">
+                  <label class="checkbox-pill"><input type="checkbox" name="stage" value="Pre-Seed"/> Pre-Seed</label>
+                  <label class="checkbox-pill"><input type="checkbox" name="stage" value="Seed"/> Seed</label>
+                  <label class="checkbox-pill"><input type="checkbox" name="stage" value="Series A"/> Series A</label>
+                  <label class="checkbox-pill"><input type="checkbox" name="stage" value="Series B"/> Series B</label>
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group"><label>Min Check Size</label><input id="thesis-min-check" placeholder="e.g. $500K"/></div>
+                <div class="form-group"><label>Max Check Size</label><input id="thesis-max-check" placeholder="e.g. $5M"/></div>
+              </div>
+              <div class="form-group"><label>Geography Focus</label><input id="thesis-geography" placeholder="e.g. United States, Canada"/></div>
+            </div>
+          </div>
+          <!-- Company -->
+          <div class="card">
+            <div class="card-header"><div class="card-header-title">Company Details</div></div>
+            <div class="form-section" style="gap:13px;">
+              <div class="form-group"><label>Company Name *</label><input id="score-company" placeholder="e.g. FinFlow AI"/></div>
+              <div class="form-group"><label>Description *</label><textarea id="score-description" placeholder="What does the company do? What problem do they solve?"></textarea></div>
+              <div class="form-row">
+                <div class="form-group"><label>Sector</label>
+                  <select id="score-sector"><option value="">Select…</option><option>FinTech</option><option>SaaS</option><option>HealthTech</option><option>AI/ML</option><option>Cybersecurity</option><option>EdTech</option><option>CleanTech</option><option>Other</option></select>
+                </div>
+                <div class="form-group"><label>Stage</label>
+                  <select id="score-stage"><option value="">Select…</option><option>Pre-Seed</option><option>Seed</option><option>Series A</option><option>Series B</option><option>Series C+</option></select>
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group"><label>Geography</label><input id="score-geography" placeholder="e.g. San Francisco, CA"/></div>
+                <div class="form-group"><label>Funding Ask</label><input id="score-ask" placeholder="e.g. $3M"/></div>
+              </div>
+              <button id="score-btn" class="btn btn-primary btn-lg btn-full" onclick="handleScoreDeal()">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+                Score Deal
+              </button>
+            </div>
+          </div>
+        </div>
+        <!-- Right: Results -->
+        <div class="score-result-panel">
+          <div id="score-results" class="hidden">
+            <div class="card">
+              <div class="score-display">
+                <div id="score-main-number" class="score-main-number score-good">–</div>
+                <div id="score-category" class="score-category score-good">Match Score</div>
+                <div id="score-explanation" class="score-explanation-text" style="margin-top:10px;"></div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-header"><div class="card-header-title">Factor Breakdown</div></div>
+              <div id="score-factors" class="factors-list"></div>
+            </div>
+            <div id="score-recommendation-container"></div>
+            <button class="btn btn-blue btn-full" onclick="goToMemo()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              Generate IC Memo →
+            </button>
+          </div>
+          <div id="score-empty" class="card" style="text-align:center;padding:48px 24px;">
+            <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="color:var(--gray-300);margin:0 auto 12px;display:block;" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+            <div style="font-size:14px;font-weight:600;color:var(--gray-600);margin-bottom:5px;">Score will appear here</div>
+            <div style="font-size:12px;color:var(--gray-400);">Fill in the form and click "Score Deal"</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- IC MEMO -->
+    <div id="page-memo" class="page">
+      <div class="page-header">
+        <h1>IC Memo Generator</h1>
+        <p>Generate a professional Investment Committee memo using AI</p>
+      </div>
+      <div id="memo-alert"></div>
+      <div class="memo-layout">
+        <div class="card">
+          <div class="card-header"><div class="card-header-title">Company Details</div></div>
+          <div class="form-section" style="gap:13px;">
+            <div class="form-group"><label>Company Name *</label><input id="memo-company" placeholder="e.g. FinFlow AI"/></div>
+            <div class="form-group"><label>Description *</label><textarea id="memo-description" placeholder="What does the company do?"></textarea></div>
+            <div class="form-row">
+              <div class="form-group"><label>Sector</label><input id="memo-sector" placeholder="e.g. FinTech"/></div>
+              <div class="form-group"><label>Stage</label>
+                <select id="memo-stage"><option value="">Select…</option><option>Pre-Seed</option><option>Seed</option><option>Series A</option><option>Series B</option></select>
+              </div>
+            </div>
+            <div class="form-group"><label>Founders</label><textarea id="memo-founders" placeholder="Founder names, backgrounds, previous exits…" style="min-height:60px;"></textarea></div>
+            <div class="form-group"><label>Market Size</label><input id="memo-market-size" placeholder="e.g. $40B TAM, growing 20% YoY"/></div>
+            <div class="form-group"><label>Traction</label><textarea id="memo-traction" placeholder="ARR, growth rate, customers, key metrics…" style="min-height:60px;"></textarea></div>
+            <div class="form-group"><label>Competition</label><textarea id="memo-competition" placeholder="Key competitors and differentiation…" style="min-height:60px;"></textarea></div>
+            <div class="form-group"><label>Match Score (if scored)</label><input id="memo-match-score" type="number" min="0" max="100" placeholder="e.g. 85"/></div>
+            <button id="memo-btn" class="btn btn-primary btn-lg btn-full" onclick="handleGenerateMemo()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              Generate IC Memo
+            </button>
+          </div>
+        </div>
+        <div>
+          <div id="memo-output-section" class="hidden">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+              <div style="font-size:14px;font-weight:600;color:var(--gray-900);">IC Memo</div>
+              <div style="display:flex;gap:8px;">
+                <button id="copy-memo-btn" class="btn btn-outline btn-sm" onclick="handleCopyMemo()">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                  Copy
+                </button>
+                <button class="btn btn-outline btn-sm" onclick="handleDownloadMemo()">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                  Download
+                </button>
+              </div>
+            </div>
+            <div id="memo-output" class="memo-output"></div>
+          </div>
+          <div id="memo-empty" class="card" style="text-align:center;padding:48px 24px;">
+            <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="color:var(--gray-300);margin:0 auto 12px;display:block;" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            <div style="font-size:14px;font-weight:600;color:var(--gray-600);margin-bottom:5px;">Memo will appear here</div>
+            <div style="font-size:12px;color:var(--gray-400);">Fill in the form and click "Generate IC Memo"</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+// ── Mock Data ──────────────────────────────────────────────────────────────
+const MOCK_STARTUPS = [
+  {id:'finflow-ai',name:'FinFlow AI',tagline:'AI-powered financial operations for SMBs',sector:'FinTech',stage:'Seed',location:'San Francisco, CA',arr:'$540K',arrRaw:540000,growth:'18% MoM',growthRaw:18,seeking:'$3M',seekingRaw:3000000,score:85,team:12,description:'FinFlow AI automates accounts payable, receivable, and cash flow forecasting for SMBs using large language models trained on financial data. Reduces CFO workload by 60% and provides real-time treasury insights.',aiInsight:'Strong product-market fit in underserved SMB finance segment. 18% MoM growth signals strong demand. AI moat in financial domain is compelling.',factors:[{name:'Stage Fit',score:90,reason:'Seed stage aligns perfectly'},{name:'Sector Alignment',score:95,reason:'FinTech is core thesis sector'},{name:'Check Size',score:85,reason:'$3M ask within target range'},{name:'Geography',score:80,reason:'SF hub with strong talent access'},{name:'Thematic Fit',score:88,reason:'AI + finance is high conviction theme'}],aiReasons:['Exceptional MoM growth rate of 18% at Seed stage','Large addressable market: 30M+ SMBs underserved by legacy tools','AI-native architecture creates durable competitive moat','Strong founder background in enterprise fintech']},
+  {id:'datavault',name:'DataVault',tagline:'Zero-trust data security for the modern enterprise',sector:'SaaS',stage:'Seed',location:'Austin, TX',arr:'$780K',arrRaw:780000,growth:'22% MoM',growthRaw:22,seeking:'$5M',seekingRaw:5000000,score:91,team:18,description:'DataVault provides a zero-trust data security platform that automatically discovers, classifies, and protects sensitive data across cloud and on-premise environments. Deployed at 45 enterprise customers with zero churn.',aiInsight:'Top-tier fundamentals: 22% MoM growth, zero churn, and expanding in a $40B market. Best match in current deal flow.',factors:[{name:'Stage Fit',score:95,reason:'Seed stage is sweet spot for fund'},{name:'Sector Alignment',score:90,reason:'SaaS + Security = high conviction'},{name:'Check Size',score:92,reason:'$5M perfectly sized check'},{name:'Geography',score:88,reason:'Austin tech ecosystem growing rapidly'},{name:'Thematic Fit',score:94,reason:'Zero-trust security is major tailwind theme'}],aiReasons:['Zero customer churn demonstrates exceptional product stickiness','NRR likely >130% based on expansion metrics','Zero-trust security market growing at 23% CAGR through 2028','Austin HQ with access to strong engineering talent at lower burn']},
+  {id:'secureflow',name:'SecureFlow',tagline:'Automated compliance for cloud-native engineering teams',sector:'Cybersecurity',stage:'Series A',location:'Seattle, WA',arr:'$1.8M',arrRaw:1800000,growth:'20% MoM',growthRaw:20,seeking:'$12M',seekingRaw:12000000,score:82,team:28,description:'SecureFlow automates SOC2, ISO 27001, and HIPAA compliance for engineering teams using AI-powered policy-as-code. Reduces compliance audit preparation from 6 months to 2 weeks.',aiInsight:'Compliance automation is a massive pain point. Strong ICP focus and 20% MoM growth makes this a compelling opportunity.',factors:[{name:'Stage Fit',score:78,reason:'Series A — within fund scope'},{name:'Sector Alignment',score:92,reason:'Cybersecurity is core thesis sector'},{name:'Check Size',score:82,reason:'$12M ask is reasonable for Stage'},{name:'Geography',score:85,reason:'Seattle strong tech ecosystem'},{name:'Thematic Fit',score:90,reason:'Compliance AI is high-demand theme'}],aiReasons:['Compliance burden growing 40% YoY as regulations expand globally','Strong ICP: every Series A+ startup must achieve SOC2','Policy-as-code approach is defensible and integrates with CI/CD','20% MoM growth with documented enterprise deals validates B2B motion']},
+  {id:'medmatch',name:'MedMatch',tagline:'Connecting patients with the right specialists faster',sector:'HealthTech',stage:'Series A',location:'Boston, MA',arr:'$2.16M',arrRaw:2160000,growth:'25% MoM',growthRaw:25,seeking:'$15M',seekingRaw:15000000,score:79,team:34,description:'MedMatch uses AI to match patients with appropriate specialists in under 24 hours, reducing average wait times from 3 weeks to 2 days. Integrated with 200+ hospital systems and major insurance providers.',aiInsight:'Exceptional growth at 25% MoM with strong network effects across hospital systems.',factors:[{name:'Stage Fit',score:75,reason:'Series A — at the upper end of stage focus'},{name:'Sector Alignment',score:85,reason:'HealthTech is secondary thesis sector'},{name:'Check Size',score:70,reason:'$15M ask is at the high end'},{name:'Geography',score:80,reason:'Boston HealthTech hub'},{name:'Thematic Fit',score:82,reason:'AI in healthcare is strong theme'}],aiReasons:['Best-in-class 25% MoM growth rate for Series A HealthTech','Network effects with 200+ hospital integrations create high switching costs','Regulatory tailwinds from CMS interoperability mandates','Clear path to $100M+ ARR within 24 months at current trajectory']},
+  {id:'codementor-ai',name:'CodeMentor AI',tagline:'Personalized AI coding tutor for developers',sector:'EdTech',stage:'Seed',location:'New York, NY',arr:'$320K',arrRaw:320000,growth:'30% MoM',growthRaw:30,seeking:'$4M',seekingRaw:4000000,score:76,team:8,description:"CodeMentor AI provides personalized, context-aware coding guidance using fine-tuned LLMs. Integrates with VS Code, GitHub, and Jira to understand a developer's exact codebase and provide hyper-relevant learning paths.",aiInsight:'Impressive 30% MoM growth trajectory at early stage. Developer-tools + EdTech intersection is compelling.',factors:[{name:'Stage Fit',score:90,reason:'Seed stage perfectly aligns'},{name:'Sector Alignment',score:75,reason:'EdTech adjacent to core AI/ML focus'},{name:'Check Size',score:88,reason:'$4M within target range'},{name:'Geography',score:78,reason:'NYC strong for dev tools community'},{name:'Thematic Fit',score:80,reason:'AI developer tools is high-conviction theme'}],aiReasons:['30% MoM growth rate is exceptional for EdTech SaaS at Seed','IDE integration creates powerful daily-use habit formation','Developer tools show strongest NPS in consumer software category','Clear enterprise expansion path through team and org licensing']},
+  {id:'pulsehealth',name:'PulseHealth',tagline:'Continuous cardiac monitoring for at-risk patients at home',sector:'HealthTech',stage:'Series A',location:'Chicago, IL',arr:'$1.2M',arrRaw:1200000,growth:'16% MoM',growthRaw:16,seeking:'$10M',seekingRaw:10000000,score:70,team:41,description:"PulseHealth's wearable + AI platform continuously monitors cardiac patients at home, detecting anomalies and alerting care teams in real-time. FDA 510(k) cleared. Partnered with 12 major hospital networks.",aiInsight:'FDA clearance and hospital partnerships are strong validation signals. HealthTech with recurring SaaS model is attractive.',factors:[{name:'Stage Fit',score:72,reason:'Series A — within fund stage range'},{name:'Sector Alignment',score:82,reason:'HealthTech with strong clinical validation'},{name:'Check Size',score:78,reason:'$10M ask is manageable'},{name:'Geography',score:68,reason:'Chicago is growing health-tech hub'},{name:'Thematic Fit',score:75,reason:'Remote patient monitoring is major macro trend'}],aiReasons:['FDA 510(k) clearance significantly de-risks regulatory path','12 hospital network partnerships create strong distribution moat','Aging demographics drive structural demand for home cardiac monitoring','Recurring SaaS + device model generates high LTV per patient']},
+  {id:'agroai',name:'AgroAI',tagline:'Precision agriculture intelligence for mid-size farms',sector:'SaaS',stage:'Seed',location:'Des Moines, IA',arr:'$410K',arrRaw:410000,growth:'12% MoM',growthRaw:12,seeking:'$3.5M',seekingRaw:3500000,score:61,team:11,description:'AgroAI combines satellite imagery, IoT soil sensors, and weather data to give mid-size farms actionable insights on planting, irrigation, and harvesting — delivered via a mobile app with offline-first architecture.',aiInsight:'AgTech is niche but growing. 12% MoM is decent for the vertical. Geography and sector are outside core thesis but team quality is high.',factors:[{name:'Stage Fit',score:85,reason:'Seed stage is ideal entry point'},{name:'Sector Alignment',score:50,reason:'AgTech SaaS is outside core sectors'},{name:'Check Size',score:82,reason:'$3.5M is within check range'},{name:'Geography',score:45,reason:'Midwest geography is outside typical focus'},{name:'Thematic Fit',score:55,reason:'AgTech is adjacent but not primary thesis'}],aiReasons:['Offline-first architecture solves real connectivity pain for rural customers','Regulatory push for precision agriculture creates favorable tailwinds','Team has strong agronomy + ML domain expertise combination','Expansion opportunity in South America and Southeast Asia is large']},
+  {id:'greengrid',name:'GreenGrid',tagline:'Smart energy management for industrial facilities',sector:'CleanTech',stage:'Series A',location:'Denver, CO',arr:'$3.84M',arrRaw:3840000,growth:'15% MoM',growthRaw:15,seeking:'$25M',seekingRaw:25000000,score:52,team:52,description:'GreenGrid deploys AI-driven energy management systems in large industrial facilities, reducing energy costs by 25-40% and enabling compliance with new EPA industrial efficiency standards.',aiInsight:'Solid ARR and real impact metrics, but $25M ask exceeds typical check size. CleanTech is not a core thesis sector.',factors:[{name:'Stage Fit',score:55,reason:'Series A at $25M is above typical entry'},{name:'Sector Alignment',score:40,reason:'CleanTech is outside core thesis'},{name:'Check Size',score:30,reason:'$25M significantly exceeds check range'},{name:'Geography',score:65,reason:'Denver is emerging tech market'},{name:'Thematic Fit',score:60,reason:'Industrial AI is adjacent to thesis'}],aiReasons:['Strong $3.84M ARR but check size mismatch with fund strategy','CleanTech hardware + software stack creates higher capital intensity','EPA regulation tailwind is real but execution risk is elevated','Better fit as co-investment with specialized climate fund']}
+];
+const MOCK_DEALS = [
+  {id:'d1',company:'FinFlow AI',stage:'Due Diligence',assignee:'Jennifer Smith',date:'2026-03-18',score:85},
+  {id:'d2',company:'MedMatch',stage:'Term Sheet',assignee:'Michael Chen',date:'2026-03-15',score:79},
+  {id:'d3',company:'DataVault',stage:'Reviewing',assignee:'Jennifer Smith',date:'2026-03-17',score:91},
+  {id:'d4',company:'CodeMentor AI',stage:'New',assignee:'Alex Rodriguez',date:'2026-03-18',score:76}
+];
+
+// ── State ──────────────────────────────────────────────────────────────────
+const state = {currentView:'dashboard',matchesTab:'all',dealflowFilter:{search:'',stage:'',sector:'',sort:'score-desc'},currentDeal:null};
+
+// ── Helpers ────────────────────────────────────────────────────────────────
+function esc(s){if(!s)return '';return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function scoreClass(n){return n>=80?'score-excellent':n>=60?'score-good':'score-moderate';}
+function scoreBg(n){return n>=80?'score-bg-excellent':n>=60?'score-bg-good':'score-bg-moderate';}
+function scoreLbl(n){return n>=80?'Excellent':n>=60?'Good':'Moderate';}
+function av(name){return name.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase();}
+function badgeStage(s){const m={'Due Diligence':'badge-due-diligence','Term Sheet':'badge-term-sheet','Reviewing':'badge-reviewing','New':'badge-new','Passed':'badge-passed'};return m[s]||'badge-secondary';}
+function progressClass(n){return n>=80?'progress-fill-green':n>=60?'progress-fill-blue':'';}
+
+// ── API Key ────────────────────────────────────────────────────────────────
+let _pendingApiResolve=null;
+function showApiKeyModal(){
+  const m=document.getElementById('api-key-modal');
+  m.classList.remove('hidden');
+  const inp=document.getElementById('api-key-input');
+  const stored=localStorage.getItem('agenticfa_api_key')||'';
+  inp.value=stored;
+  inp.focus();
+}
+function closeApiKeyModal(){
+  document.getElementById('api-key-modal').classList.add('hidden');
+  if(_pendingApiResolve){_pendingApiResolve(null);_pendingApiResolve=null;}
+}
+function saveApiKey(){
+  const key=document.getElementById('api-key-input').value.trim();
+  if(!key){alert('Please enter a valid API key.');return;}
+  localStorage.setItem('agenticfa_api_key',key);
+  document.getElementById('api-key-modal').classList.add('hidden');
+  if(_pendingApiResolve){_pendingApiResolve(key);_pendingApiResolve=null;}
+}
+function getApiKey(){
+  return new Promise(resolve=>{
+    const k=localStorage.getItem('agenticfa_api_key');
+    if(k){resolve(k);return;}
+    _pendingApiResolve=resolve;
+    showApiKeyModal();
+  });
+}
+
+// ── Claude API ─────────────────────────────────────────────────────────────
+async function callClaude(systemPrompt,userMessage){
+  const apiKey=await getApiKey();
+  if(!apiKey)throw new Error('API key required');
+  const res=await fetch('https://api.anthropic.com/v1/messages',{
+    method:'POST',
+    headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+    body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:2048,system:systemPrompt,messages:[{role:'user',content:userMessage}]})
+  });
+  if(!res.ok){const e=await res.json().catch(()=>({}));throw new Error(e.error?.message||`API error ${res.status}`);}
+  const d=await res.json();
+  return d.content[0].text;
+}
+
+async function scoreThesisAlignment(company,thesis){
+  const sys=`You are a senior VC analyst. Score the thesis alignment between a fund and a startup on a scale of 0-100. Return ONLY valid JSON (no markdown fences): {"score":number,"explanation":"2-3 sentence summary","factors":[{"name":"Stage Fit","score":number,"reason":"brief reason"},{"name":"Sector Alignment","score":number,"reason":"brief reason"},{"name":"Check Size","score":number,"reason":"brief reason"},{"name":"Geography","score":number,"reason":"brief reason"},{"name":"Thematic Fit","score":number,"reason":"brief reason"}],"recommendation":"Invest/Review/Pass — brief rationale"}`;
+  const msg=`Fund thesis: sectors=${thesis.sectors.join(',')||'any'}, stages=${thesis.stages.join(',')||'any'}, check size=${thesis.minCheck||'?'} to ${thesis.maxCheck||'?'}, geography=${thesis.geography||'any'}.\n\nCompany: ${company.name}, sector=${company.sector}, stage=${company.stage}, geography=${company.geography}, asking=${company.askAmount}.\n\nDescription: ${company.description}`;
+  const raw=await callClaude(sys,msg);
+  const cleaned=raw.replace(/```json?|```/g,'').trim();
+  return JSON.parse(cleaned);
+}
+
+async function generateICMemo(data){
+  const sys=`You are a senior VC analyst. Write a professional Investment Committee memo in markdown format. Include these sections: # [Company] — IC Memo\n## 1. Executive Summary\n## 2. Thesis Alignment\n## 3. Team & Founders\n## 4. Market Opportunity\n## 5. Competitive Landscape\n## 6. Traction & Financials\n## 7. Key Risks\n## 8. Recommendation & Terms\n\nBe analytical, specific, and balanced. Use bold for key figures.`;
+  const msg=`Company: ${data.company}\nSector: ${data.sector||'N/A'}\nStage: ${data.stage||'N/A'}\nDescription: ${data.description}\nFounders: ${data.founders||'Not provided'}\nMarket: ${data.marketSize||'Not provided'}\nTraction: ${data.traction||'Not provided'}\nCompetition: ${data.competition||'Not provided'}\nMatch Score: ${data.matchScore||'N/A'}/100`;
+  return await callClaude(sys,msg);
+}
+
+// ── Navigation ─────────────────────────────────────────────────────────────
+function navigateTo(view){
+  state.currentView=view;
+  document.querySelectorAll('.nav-item').forEach(el=>el.classList.toggle('active',el.dataset.view===view));
+  document.querySelectorAll('.page').forEach(el=>el.classList.toggle('active',el.id===`page-${view}`));
+  if(view==='dashboard')renderDashboard();
+  if(view==='dealflow')renderDealFlow();
+  if(view==='matches')renderMatches();
+}
+window.navigateTo=navigateTo;
+
+// ── Dashboard ──────────────────────────────────────────────────────────────
+function renderDashboard(){
+  const top3=[...MOCK_STARTUPS].sort((a,b)=>b.score-a.score).slice(0,3);
+  document.getElementById('dashboard-top-matches').innerHTML=top3.map(s=>`
+    <div class="match-card">
+      <div class="match-avatar">${av(s.name)}</div>
+      <div class="match-body">
+        <div class="match-name">${esc(s.name)}</div>
+        <div class="match-badges"><span class="badge badge-sector">${esc(s.sector)}</span><span class="badge badge-secondary">${esc(s.stage)}</span></div>
+        <div class="match-metrics">
+          <div><div class="mm-label">ARR</div><div class="mm-value">${esc(s.arr)}</div></div>
+          <div><div class="mm-label">Growth</div><div class="mm-value" style="color:var(--green-600)">${esc(s.growth)}</div></div>
+          <div><div class="mm-label">Seeking</div><div class="mm-value">${esc(s.seeking)}</div></div>
+        </div>
+      </div>
+      <div class="match-score-wrap">
+        <div class="${scoreBg(s.score)}">
+          <div class="score-num ${scoreClass(s.score)}">${s.score}</div>
+          <div class="score-lbl ${scoreClass(s.score)}">${scoreLbl(s.score)}</div>
+        </div>
+      </div>
+    </div>`).join('');
+
+  document.getElementById('dashboard-activity').innerHTML=MOCK_DEALS.map(d=>`
+    <div class="activity-item">
+      <div class="act-avatar">${av(d.company)}</div>
+      <div style="flex:1;min-width:0;">
+        <div class="act-name">${esc(d.company)}</div>
+        <div class="act-meta">${esc(d.assignee)} · ${d.date}</div>
+      </div>
+      <span class="badge ${badgeStage(d.stage)}">${esc(d.stage)}</span>
+    </div>`).join('');
+
+  const stages=[{l:'Due Diligence',c:1,col:'#9333ea',p:25},{l:'Reviewing',c:1,col:'#2563eb',p:25},{l:'Term Sheet',c:1,col:'#16a34a',p:25},{l:'New',c:1,col:'#6b7280',p:25}];
+  document.getElementById('chart-pipeline-stage').innerHTML=stages.map(s=>`
+    <div class="chart-bar-row">
+      <span class="chart-bar-label">${esc(s.l)}</span>
+      <div class="chart-bar-track"><div class="chart-bar-fill" data-p="${s.p}" style="background:${s.col};width:0%;">${s.c}</div></div>
+    </div>`).join('');
+  requestAnimationFrame(()=>{document.querySelectorAll('.chart-bar-fill').forEach(el=>{setTimeout(()=>{el.style.width=el.dataset.p+'%';},100);});});
+
+  const sectors=[{l:'FinTech',p:25,c:'#2563eb'},{l:'HealthTech',p:25,c:'#9333ea'},{l:'SaaS',p:25,c:'#16a34a'},{l:'CleanTech',p:12,c:'#ca8a04'},{l:'Other',p:13,c:'#9ca3af'}];
+  let cum=0;const r=52,cx=60,cy=60,circ=2*Math.PI*r;
+  const paths=sectors.map(s=>{const da=(s.p/100)*circ-1,off=circ-(cum/100)*circ;cum+=s.p;return `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${s.c}" stroke-width="18" stroke-dasharray="${da} ${circ}" stroke-dashoffset="${off}" transform="rotate(-90 ${cx} ${cy})"/>`;}).join('');
+  const legend=sectors.map(s=>`<div class="pie-legend-item"><div class="pie-dot" style="background:${s.c}"></div><span class="pie-legend-label">${esc(s.l)}</span><span class="pie-legend-pct">${s.p}%</span></div>`).join('');
+  document.getElementById('chart-sector').innerHTML=`<svg width="120" height="120" viewBox="0 0 120 120" style="flex-shrink:0;">${paths}</svg><div class="pie-legend">${legend}</div>`;
+}
+
+// ── Deal Flow ──────────────────────────────────────────────────────────────
+function onDealFlowFilter(){
+  state.dealflowFilter.search=document.getElementById('dealflow-search').value;
+  state.dealflowFilter.stage=document.getElementById('dealflow-stage').value;
+  state.dealflowFilter.sector=document.getElementById('dealflow-sector').value;
+  state.dealflowFilter.sort=document.getElementById('dealflow-sort').value;
+  renderDealFlow();
+}
+function renderDealFlow(){
+  const {search,stage,sector,sort}=state.dealflowFilter;
+  let list=[...MOCK_STARTUPS];
+  if(search){const q=search.toLowerCase();list=list.filter(s=>s.name.toLowerCase().includes(q)||s.sector.toLowerCase().includes(q)||s.description.toLowerCase().includes(q));}
+  if(stage)list=list.filter(s=>s.stage===stage);
+  if(sector)list=list.filter(s=>s.sector===sector);
+  if(sort==='score-desc')list.sort((a,b)=>b.score-a.score);
+  else if(sort==='arr-desc')list.sort((a,b)=>b.arrRaw-a.arrRaw);
+  else if(sort==='growth-desc')list.sort((a,b)=>b.growthRaw-a.growthRaw);
+  else if(sort==='name-asc')list.sort((a,b)=>a.name.localeCompare(b.name));
+  document.getElementById('dealflow-count').textContent=`${list.length} startup${list.length!==1?'s':''} found`;
+  const grid=document.getElementById('dealflow-grid');
+  if(!list.length){grid.innerHTML=`<div class="empty-state" style="grid-column:1/-1;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><h3>No startups match your filters</h3><p>Try adjusting your search or filters</p></div>`;return;}
+  grid.innerHTML=list.map(s=>`
+    <div class="startup-card">
+      <div class="sc-header">
+        <div><div class="sc-name">${esc(s.name)}</div><div class="sc-tagline">${esc(s.tagline)}</div></div>
+        <div class="${scoreBg(s.score)}" style="text-align:center;flex-shrink:0;">
+          <div class="score-num ${scoreClass(s.score)}" style="font-size:22px;">${s.score}</div>
+          <div class="score-lbl ${scoreClass(s.score)}">${scoreLbl(s.score)}</div>
+        </div>
+      </div>
+      <div class="sc-badges"><span class="badge badge-sector">${esc(s.sector)}</span><span class="badge badge-secondary">${esc(s.stage)}</span><span class="badge badge-outline">📍 ${esc(s.location)}</span></div>
+      <div class="sc-desc">${esc(s.description)}</div>
+      <div class="sc-metrics">
+        <div class="sc-metric"><div class="sc-metric-label">ARR</div><div class="sc-metric-value">${esc(s.arr)}</div></div>
+        <div class="sc-metric"><div class="sc-metric-label">Growth</div><div class="sc-metric-value" style="color:var(--green-600)">${esc(s.growth)}</div></div>
+        <div class="sc-metric"><div class="sc-metric-label">Team</div><div class="sc-metric-value">${s.team}</div></div>
+        <div class="sc-metric"><div class="sc-metric-label">Stage</div><div class="sc-metric-value">${esc(s.stage)}</div></div>
+      </div>
+      <div class="sc-funding"><span style="color:var(--gray-500)">Seeking</span><span style="font-weight:700">${esc(s.seeking)}</span></div>
+      <div class="ai-insight">
+        <div class="ai-insight-hdr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> AI Insight</div>
+        <p>${esc(s.aiInsight)}</p>
+      </div>
+      <div class="sc-actions">
+        <button class="btn btn-outline btn-sm" style="flex:1">View Details</button>
+        <button class="btn btn-primary btn-sm" style="flex:1">Add to Pipeline</button>
+      </div>
+    </div>`).join('');
+}
+
+// ── AI Matches ─────────────────────────────────────────────────────────────
+function renderMatches(){
+  const all=[...MOCK_STARTUPS].sort((a,b)=>b.score-a.score);
+  const excellent=all.filter(s=>s.score>=80),good=all.filter(s=>s.score>=60&&s.score<80),moderate=all.filter(s=>s.score<60);
+  document.getElementById('match-stat-excellent').textContent=excellent.length;
+  document.getElementById('match-stat-good').textContent=good.length;
+  document.getElementById('match-stat-total').textContent=all.length;
+  const tab=state.matchesTab;
+  const toShow=tab==='excellent'?excellent:tab==='good'?good:tab==='moderate'?moderate:all;
+  const container=document.getElementById('matches-list');
+  if(!toShow.length){container.innerHTML=`<div class="empty-state"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><h3>No matches in this category</h3><p>Switch tabs to see other matches</p></div>`;return;}
+  container.innerHTML=toShow.map(s=>`
+    <div class="full-match-card">
+      <div class="fmc-header">
+        <div>
+          <div class="fmc-name">${esc(s.name)}</div>
+          <div class="fmc-sub">${esc(s.tagline)} · ${esc(s.location)}</div>
+          <div class="fmc-badges">
+            <span class="badge badge-sector">${esc(s.sector)}</span>
+            <span class="badge badge-secondary">${esc(s.stage)}</span>
+            <span class="badge badge-outline">ARR ${esc(s.arr)}</span>
+            <span class="badge badge-outline" style="color:var(--green-600);border-color:var(--green-100);background:var(--green-50)">${esc(s.growth)}</span>
+          </div>
+        </div>
+        <div class="${scoreBg(s.score)}" style="text-align:center;flex-shrink:0;">
+          <div class="score-num ${scoreClass(s.score)}" style="font-size:32px;letter-spacing:-1.5px;">${s.score}</div>
+          <div class="score-lbl ${scoreClass(s.score)}">${scoreLbl(s.score)} Match</div>
+        </div>
+      </div>
+      <div class="breakdown-grid">
+        ${(s.factors||[]).map((f,i)=>`
+          <div>
+            <div class="bd-label">${esc(f.name)}</div>
+            <div class="progress-track"><div class="progress-fill ${progressClass(f.score)}" data-progress="${f.score}" style="width:0%"></div></div>
+            <div class="bd-score">${f.score}/100</div>
+          </div>`).join('')}
+      </div>
+      <div class="ai-insight">
+        <div class="ai-insight-hdr"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg> AI Reasoning</div>
+        <div style="margin-top:4px">${(s.aiReasons||[]).map(r=>`<div style="display:flex;align-items:flex-start;gap:6px;margin-bottom:4px;"><span style="color:var(--purple-600);font-size:12px;margin-top:1px">✓</span><span style="font-size:12px;color:var(--purple-700);line-height:1.5">${esc(r)}</span></div>`).join('')}</div>
+      </div>
+      <div class="fmc-actions">
+        <button class="btn btn-outline btn-sm">View Full Profile</button>
+        <button class="btn btn-primary btn-sm">Add to Pipeline</button>
+      </div>
+    </div>`).join('');
+  requestAnimationFrame(()=>{container.querySelectorAll('[data-progress]').forEach(el=>{const v=parseInt(el.dataset.progress,10);setTimeout(()=>{el.style.width=v+'%';},80);});});
+}
+
+// ── Score Page ─────────────────────────────────────────────────────────────
+function collectThesis(){
+  return {
+    sectors:Array.from(document.querySelectorAll('input[name="sector"]:checked')).map(e=>e.value),
+    stages:Array.from(document.querySelectorAll('input[name="stage"]:checked')).map(e=>e.value),
+    minCheck:document.getElementById('thesis-min-check').value.trim(),
+    maxCheck:document.getElementById('thesis-max-check').value.trim(),
+    geography:document.getElementById('thesis-geography').value.trim()
+  };
+}
+
+function setLoading(id,loading,html){
+  const b=document.getElementById(id);if(!b)return;
+  b.disabled=loading;
+  if(loading){b._orig=b.innerHTML;b.innerHTML=`<span class="spinner"></span> ${html||'Loading…'}`;}
+  else{b.innerHTML=b._orig||html||'Done';}
+}
+
+function showAlert(id,msg,type='error'){
+  const el=document.getElementById(id);if(!el)return;
+  el.innerHTML=`<div class="alert alert-${type}">${esc(msg)}</div>`;
+}
+function clearAlert(id){const el=document.getElementById(id);if(el)el.innerHTML='';}
+
+async function handleScoreDeal(){
+  const company=document.getElementById('score-company').value.trim();
+  const description=document.getElementById('score-description').value.trim();
+  if(!company||!description){showAlert('score-alert','Company name and description are required.');return;}
+  clearAlert('score-alert');
+  setLoading('score-btn',true,'Scoring…');
+  document.getElementById('score-results').classList.add('hidden');
+  document.getElementById('score-empty').classList.remove('hidden');
+  try{
+    const result=await scoreThesisAlignment({name:company,description,sector:document.getElementById('score-sector').value,stage:document.getElementById('score-stage').value,geography:document.getElementById('score-geography').value.trim(),askAmount:document.getElementById('score-ask').value.trim()},collectThesis());
+    state.currentDeal={company,description,sector:document.getElementById('score-sector').value,stage:document.getElementById('score-stage').value,score:result.score};
+    renderScoreResult(result);
+  }catch(e){showAlert('score-alert',`Scoring failed: ${e.message}`);}
+  finally{setLoading('score-btn',false,'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg> Score Deal');}
+}
+
+function animateCounter(el,from,to,dur){
+  const t0=performance.now();
+  function step(now){const p=Math.min((now-t0)/dur,1),e=1-Math.pow(1-p,3);el.textContent=Math.round(from+(to-from)*e);if(p<1)requestAnimationFrame(step);}
+  requestAnimationFrame(step);
+}
+
+function renderScoreResult(result){
+  const{score,explanation,factors,recommendation}=result;
+  document.getElementById('score-empty').classList.add('hidden');
+  const panel=document.getElementById('score-results');panel.classList.remove('hidden');
+  const numEl=document.getElementById('score-main-number');
+  numEl.className=`score-main-number ${scoreClass(score)}`;
+  numEl.textContent='0';animateCounter(numEl,0,score,900);
+  const catEl=document.getElementById('score-category');
+  catEl.className=`score-category ${scoreClass(score)}`;
+  catEl.textContent=scoreLbl(score)+' Match';
+  document.getElementById('score-explanation').textContent=explanation||'';
+  const factorsEl=document.getElementById('score-factors');
+  if(factorsEl&&factors){
+    factorsEl.innerHTML=(factors||[]).map((f,i)=>`
+      <div>
+        <div class="factor-header"><span class="factor-name">${esc(f.name)}</span><span class="factor-score">${f.score}/100</span></div>
+        <div class="progress-track"><div class="progress-fill ${progressClass(f.score)}" id="fb-${i}" style="width:0%"></div></div>
+        ${f.reason?`<div class="factor-reason">${esc(f.reason)}</div>`:''}
+      </div>`).join('');
+    requestAnimationFrame(()=>{factors.forEach((f,i)=>{setTimeout(()=>{const b=document.getElementById(`fb-${i}`);if(b)b.style.width=f.score+'%';},i*80);});});
+  }
+  const lower=(recommendation||'').toLowerCase();
+  let cls='rec-review',lbl='Consider';
+  if(lower.includes('invest')||lower.includes('pursue')){cls='rec-invest';lbl='Invest';}
+  else if(lower.includes('pass')||lower.includes('decline')){cls='rec-pass';lbl='Pass';}
+  const parts=(recommendation||'').split(/\s*[—–-]\s*/);
+  const dispLbl=parts.length>1?parts[0].trim():lbl;
+  const rationale=parts.length>1?parts.slice(1).join(' — ').trim():recommendation;
+  document.getElementById('score-recommendation-container').innerHTML=`<div class="rec-box ${cls}"><div class="rec-label">${esc(dispLbl)}</div><div class="rec-text">${esc(rationale)}</div></div>`;
+}
+
+function goToMemo(){
+  if(state.currentDeal){
+    const d=state.currentDeal;
+    ['memo-company','memo-sector'].forEach(id=>{const el=document.getElementById(id);if(el&&d[id.replace('memo-','')]!==undefined)el.value=d[id.replace('memo-','')]||'';});
+    const dc=document.getElementById('memo-company');if(dc)dc.value=d.company||'';
+    const dd=document.getElementById('memo-description');if(dd)dd.value=d.description||'';
+    const ds=document.getElementById('memo-sector');if(ds)ds.value=d.sector||'';
+    const dst=document.getElementById('memo-stage');if(dst&&d.stage){const o=Array.from(dst.options).find(o=>o.value===d.stage);if(o)dst.value=o.value;}
+    const sc=document.getElementById('memo-match-score');if(sc&&d.score)sc.value=d.score;
+  }
+  navigateTo('memo');
+}
+
+// ── Memo Page ──────────────────────────────────────────────────────────────
+async function handleGenerateMemo(){
+  const company=document.getElementById('memo-company').value.trim();
+  const description=document.getElementById('memo-description').value.trim();
+  if(!company||!description){showAlert('memo-alert','Company name and description are required.');return;}
+  clearAlert('memo-alert');
+  setLoading('memo-btn',true,'Generating memo…');
+  document.getElementById('memo-output-section').classList.add('hidden');
+  document.getElementById('memo-empty').classList.remove('hidden');
+  try{
+    const memo=await generateICMemo({company,description,sector:document.getElementById('memo-sector').value.trim(),stage:document.getElementById('memo-stage').value,founders:document.getElementById('memo-founders').value.trim(),marketSize:document.getElementById('memo-market-size').value.trim(),traction:document.getElementById('memo-traction').value.trim(),competition:document.getElementById('memo-competition').value.trim(),matchScore:document.getElementById('memo-match-score').value});
+    const outEl=document.getElementById('memo-output');
+    outEl.innerHTML=window.marked?window.marked.parse(memo):memo.replace(/\n/g,'<br>');
+    outEl.dataset.raw=memo;
+    document.getElementById('memo-empty').classList.add('hidden');
+    document.getElementById('memo-output-section').classList.remove('hidden');
+    document.getElementById('memo-output-section').scrollIntoView({behavior:'smooth',block:'start'});
+  }catch(e){showAlert('memo-alert',`Memo generation failed: ${e.message}`);}
+  finally{setLoading('memo-btn',false,'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg> Generate IC Memo');}
+}
+function handleCopyMemo(){
+  const raw=document.getElementById('memo-output').dataset.raw;
+  if(!raw)return;
+  navigator.clipboard.writeText(raw).then(()=>{const b=document.getElementById('copy-memo-btn');if(b){const o=b.innerHTML;b.innerHTML='✓ Copied!';setTimeout(()=>{b.innerHTML=o;},2000);}});
+}
+function handleDownloadMemo(){
+  const raw=document.getElementById('memo-output').dataset.raw;
+  const name=document.getElementById('memo-company').value.trim()||'deal';
+  if(!raw)return;
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([raw],{type:'text/markdown'}));a.download=`IC-Memo-${name.replace(/\s+/g,'-')}.md`;a.click();
+}
+
+// ── Init ───────────────────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded',()=>{
+  document.querySelectorAll('.nav-item').forEach(el=>{el.addEventListener('click',()=>{const v=el.dataset.view;if(v)navigateTo(v);});});
+  document.querySelectorAll('.tab-btn[data-tab]').forEach(btn=>{btn.addEventListener('click',()=>{state.matchesTab=btn.dataset.tab;document.querySelectorAll('.tab-btn[data-tab]').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderMatches();});});
+  document.getElementById('api-key-input').addEventListener('keydown',e=>{if(e.key==='Enter')saveApiKey();});
+  navigateTo('dashboard');
+});
+</script>
+</body>
+</html>
