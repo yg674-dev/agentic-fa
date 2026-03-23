@@ -322,8 +322,8 @@ input,textarea,select{font-family:var(--font)}
   .mobile-nav-item svg{width:20px;height:20px;flex-shrink:0}
   .mobile-nav-item.active{color:var(--blue-600)}
   .mobile-nav-item span{font-size:10px;line-height:1}
-  /* Hide desktop-only elements */
-  .sc-actions .btn:not(.btn-blue){display:none}
+  /* Stack action buttons vertically on mobile */
+  .sc-actions{flex-direction:column}
 }
 </style>
 </head>
