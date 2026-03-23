@@ -702,6 +702,7 @@ input,textarea,select{font-family:var(--font)}
 const MOCK_STARTUPS = [
   {
     id:'neurallend',name:'NeuralLend',tagline:'AI credit underwriting for underserved SMBs',
+    url:'https://www.crunchbase.com/search/organizations/field/organizations/short_description/ai%20credit%20underwriting',
     sector:'FinTech',stage:'Seed',location:'San Francisco, CA',
     arr:'$420K',arrRaw:420000,growth:'19% MoM',growthRaw:19,
     seeking:'$3.1M',seekingRaw:3100000,score:91,team:14,
@@ -723,6 +724,7 @@ const MOCK_STARTUPS = [
   },
   {
     id:'stackguard',name:'StackGuard',tagline:'Automated Kubernetes security for cloud-native teams',
+    url:'https://www.crunchbase.com/organization/ktrust',
     sector:'Cybersecurity',stage:'Seed',location:'Austin, TX',
     arr:'$580K',arrRaw:580000,growth:'22% MoM',growthRaw:22,
     seeking:'$4.2M',seekingRaw:4200000,score:88,team:16,
@@ -744,6 +746,7 @@ const MOCK_STARTUPS = [
   },
   {
     id:'flowops',name:'FlowOps',tagline:'Revenue operations automation for B2B SaaS teams',
+    url:'https://www.crunchbase.com/search/organizations/field/organizations/short_description/revenue%20operations%20automation',
     sector:'SaaS',stage:'Seed',location:'New York, NY',
     arr:'$550K',arrRaw:550000,growth:'20% MoM',growthRaw:20,
     seeking:'$3.5M',seekingRaw:3500000,score:86,team:13,
@@ -765,6 +768,7 @@ const MOCK_STARTUPS = [
   },
   {
     id:'shaped-ai',name:'Shaped AI',tagline:'Real-time recommendation engine for product-led SaaS',
+    url:'https://www.crunchbase.com/organization/shaped-2',
     sector:'AI/ML',stage:'Seed',location:'San Francisco, CA',
     arr:'$480K',arrRaw:480000,growth:'28% MoM',growthRaw:28,
     seeking:'$3.8M',seekingRaw:3800000,score:84,team:11,
@@ -786,6 +790,7 @@ const MOCK_STARTUPS = [
   },
   {
     id:'careroute',name:'CareRoute AI',tagline:'AI care navigation — right specialist, right time',
+    url:'https://www.crunchbase.com/organization/kyruus',
     sector:'HealthTech',stage:'Series A',location:'Boston, MA',
     arr:'$2.9M',arrRaw:2900000,growth:'15% MoM',growthRaw:15,
     seeking:'$12.4M',seekingRaw:12400000,score:81,team:32,
@@ -807,6 +812,7 @@ const MOCK_STARTUPS = [
   },
   {
     id:'medpulse',name:'MedPulse',tagline:'Predictive readmission AI for hospital care teams',
+    url:'https://www.crunchbase.com/search/organizations/field/organizations/short_description/readmission%20prediction%20AI',
     sector:'HealthTech',stage:'Seed',location:'Chicago, IL',
     arr:'$280K',arrRaw:280000,growth:'12% MoM',growthRaw:12,
     seeking:'$3.0M',seekingRaw:3000000,score:71,team:10,
@@ -828,6 +834,7 @@ const MOCK_STARTUPS = [
   },
   {
     id:'greenledger',name:'GreenLedger',tagline:'AI carbon accounting for mid-market enterprises',
+    url:'https://www.crunchbase.com/organization/watershed-3',
     sector:'CleanTech',stage:'Seed',location:'Denver, CO',
     arr:'$340K',arrRaw:340000,growth:'14% MoM',growthRaw:14,
     seeking:'$2.8M',seekingRaw:2800000,score:63,team:9,
@@ -849,6 +856,7 @@ const MOCK_STARTUPS = [
   },
   {
     id:'vertexiq',name:'VertexIQ',tagline:'AI competitive intelligence for enterprise sales teams',
+    url:'https://www.crunchbase.com/organization/klue',
     sector:'AI/ML',stage:'Pre-Seed',location:'New York, NY',
     arr:'$85K',arrRaw:85000,growth:'35% MoM',growthRaw:35,
     seeking:'$1.2M',seekingRaw:1200000,score:57,team:5,
@@ -1050,7 +1058,7 @@ function renderDealFlow(){
         <p>${esc(s.aiInsight)}</p>
       </div>
       <div class="sc-actions">
-        <button class="btn btn-outline btn-sm" style="flex:1">View Details</button>
+        <button class="btn btn-outline btn-sm" style="flex:1" onclick="window.open('${esc(s.url||'#')}','_blank')">View Details</button>
         <button class="btn btn-primary btn-sm" style="flex:1">Add to Pipeline</button>
       </div>
     </div>`).join('');
