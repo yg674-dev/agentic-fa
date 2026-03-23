@@ -441,8 +441,8 @@ input,textarea,select{font-family:var(--font)}
       </div>
       <div class="stats-grid">
         <div class="stat-card"><div class="stat-icon icon-blue"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg></div><div><div class="stat-value">4</div><div class="stat-label">Active Pipeline</div><div class="stat-delta">↑ 2 this week</div></div></div>
-        <div class="stat-card"><div class="stat-icon icon-purple"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div><div><div class="stat-value">4</div><div class="stat-label">High Matches</div><div class="stat-delta" style="color:var(--gray-400);">80%+ score</div></div></div>
-        <div class="stat-card"><div class="stat-icon icon-green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div><div><div class="stat-value">77</div><div class="stat-label">Avg Match Score</div><div class="stat-delta" style="color:var(--gray-400);">Across 8 startups</div></div></div>
+        <div class="stat-card"><div class="stat-icon icon-purple"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div><div><div class="stat-value">5</div><div class="stat-label">High Matches</div><div class="stat-delta" style="color:var(--gray-400);">80%+ score</div></div></div>
+        <div class="stat-card"><div class="stat-icon icon-green"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div><div><div class="stat-value">78</div><div class="stat-label">Avg Match Score</div><div class="stat-delta" style="color:var(--gray-400);">Across 8 startups</div></div></div>
         <div class="stat-card"><div class="stat-icon icon-orange"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div><div><div class="stat-value">$125M</div><div class="stat-label">Total AUM</div><div class="stat-delta" style="color:var(--gray-400);">24 investments</div></div></div>
       </div>
       <div class="dashboard-grid">
@@ -693,22 +693,187 @@ input,textarea,select{font-family:var(--font)}
 </div>
 
 <script>
-// ── Mock Data ──────────────────────────────────────────────────────────────
+// ── Market Data (Sources: KPMG/PitchBook Venture Pulse Q4 2024, SVB State of Markets 2025,
+//    Crunchbase EOY 2024, CB Insights State of Venture Q4 2024, NVCA Yearbook 2024)
+// ── US Median Deal Sizes 2024: Seed $3.1M | Series A $12.4M | Series B $28.0M
+// ── US Median Pre-$ Valuations 2024: Seed $13.8M | Series A $40.0M | Series B $105.0M
+// ── Median ARR at Raise 2024: Seed $363K | Series A $2.5M (FinTech Series A: $4.0M)
+// ── AI = 47.2% of US VC deal value in 2024 (KPMG); Global VC: $368B total 2024
 const MOCK_STARTUPS = [
-  {id:'finflow-ai',name:'FinFlow AI',tagline:'AI-powered financial operations for SMBs',sector:'FinTech',stage:'Seed',location:'San Francisco, CA',arr:'$540K',arrRaw:540000,growth:'18% MoM',growthRaw:18,seeking:'$3M',seekingRaw:3000000,score:85,team:12,description:'FinFlow AI automates accounts payable, receivable, and cash flow forecasting for SMBs using large language models trained on financial data. Reduces CFO workload by 60% and provides real-time treasury insights.',aiInsight:'Strong product-market fit in underserved SMB finance segment. 18% MoM growth signals strong demand. AI moat in financial domain is compelling.',factors:[{name:'Stage Fit',score:90,reason:'Seed stage aligns perfectly'},{name:'Sector Alignment',score:95,reason:'FinTech is core thesis sector'},{name:'Check Size',score:85,reason:'$3M ask within target range'},{name:'Geography',score:80,reason:'SF hub with strong talent access'},{name:'Thematic Fit',score:88,reason:'AI + finance is high conviction theme'}],aiReasons:['Exceptional MoM growth rate of 18% at Seed stage','Large addressable market: 30M+ SMBs underserved by legacy tools','AI-native architecture creates durable competitive moat','Strong founder background in enterprise fintech']},
-  {id:'datavault',name:'DataVault',tagline:'Zero-trust data security for the modern enterprise',sector:'SaaS',stage:'Seed',location:'Austin, TX',arr:'$780K',arrRaw:780000,growth:'22% MoM',growthRaw:22,seeking:'$5M',seekingRaw:5000000,score:91,team:18,description:'DataVault provides a zero-trust data security platform that automatically discovers, classifies, and protects sensitive data across cloud and on-premise environments. Deployed at 45 enterprise customers with zero churn.',aiInsight:'Top-tier fundamentals: 22% MoM growth, zero churn, and expanding in a $40B market. Best match in current deal flow.',factors:[{name:'Stage Fit',score:95,reason:'Seed stage is sweet spot for fund'},{name:'Sector Alignment',score:90,reason:'SaaS + Security = high conviction'},{name:'Check Size',score:92,reason:'$5M perfectly sized check'},{name:'Geography',score:88,reason:'Austin tech ecosystem growing rapidly'},{name:'Thematic Fit',score:94,reason:'Zero-trust security is major tailwind theme'}],aiReasons:['Zero customer churn demonstrates exceptional product stickiness','NRR likely >130% based on expansion metrics','Zero-trust security market growing at 23% CAGR through 2028','Austin HQ with access to strong engineering talent at lower burn']},
-  {id:'secureflow',name:'SecureFlow',tagline:'Automated compliance for cloud-native engineering teams',sector:'Cybersecurity',stage:'Series A',location:'Seattle, WA',arr:'$1.8M',arrRaw:1800000,growth:'20% MoM',growthRaw:20,seeking:'$12M',seekingRaw:12000000,score:82,team:28,description:'SecureFlow automates SOC2, ISO 27001, and HIPAA compliance for engineering teams using AI-powered policy-as-code. Reduces compliance audit preparation from 6 months to 2 weeks.',aiInsight:'Compliance automation is a massive pain point. Strong ICP focus and 20% MoM growth makes this a compelling opportunity.',factors:[{name:'Stage Fit',score:78,reason:'Series A — within fund scope'},{name:'Sector Alignment',score:92,reason:'Cybersecurity is core thesis sector'},{name:'Check Size',score:82,reason:'$12M ask is reasonable for Stage'},{name:'Geography',score:85,reason:'Seattle strong tech ecosystem'},{name:'Thematic Fit',score:90,reason:'Compliance AI is high-demand theme'}],aiReasons:['Compliance burden growing 40% YoY as regulations expand globally','Strong ICP: every Series A+ startup must achieve SOC2','Policy-as-code approach is defensible and integrates with CI/CD','20% MoM growth with documented enterprise deals validates B2B motion']},
-  {id:'medmatch',name:'MedMatch',tagline:'Connecting patients with the right specialists faster',sector:'HealthTech',stage:'Series A',location:'Boston, MA',arr:'$2.16M',arrRaw:2160000,growth:'25% MoM',growthRaw:25,seeking:'$15M',seekingRaw:15000000,score:79,team:34,description:'MedMatch uses AI to match patients with appropriate specialists in under 24 hours, reducing average wait times from 3 weeks to 2 days. Integrated with 200+ hospital systems and major insurance providers.',aiInsight:'Exceptional growth at 25% MoM with strong network effects across hospital systems.',factors:[{name:'Stage Fit',score:75,reason:'Series A — at the upper end of stage focus'},{name:'Sector Alignment',score:85,reason:'HealthTech is secondary thesis sector'},{name:'Check Size',score:70,reason:'$15M ask is at the high end'},{name:'Geography',score:80,reason:'Boston HealthTech hub'},{name:'Thematic Fit',score:82,reason:'AI in healthcare is strong theme'}],aiReasons:['Best-in-class 25% MoM growth rate for Series A HealthTech','Network effects with 200+ hospital integrations create high switching costs','Regulatory tailwinds from CMS interoperability mandates','Clear path to $100M+ ARR within 24 months at current trajectory']},
-  {id:'codementor-ai',name:'CodeMentor AI',tagline:'Personalized AI coding tutor for developers',sector:'EdTech',stage:'Seed',location:'New York, NY',arr:'$320K',arrRaw:320000,growth:'30% MoM',growthRaw:30,seeking:'$4M',seekingRaw:4000000,score:76,team:8,description:"CodeMentor AI provides personalized, context-aware coding guidance using fine-tuned LLMs. Integrates with VS Code, GitHub, and Jira to understand a developer's exact codebase and provide hyper-relevant learning paths.",aiInsight:'Impressive 30% MoM growth trajectory at early stage. Developer-tools + EdTech intersection is compelling.',factors:[{name:'Stage Fit',score:90,reason:'Seed stage perfectly aligns'},{name:'Sector Alignment',score:75,reason:'EdTech adjacent to core AI/ML focus'},{name:'Check Size',score:88,reason:'$4M within target range'},{name:'Geography',score:78,reason:'NYC strong for dev tools community'},{name:'Thematic Fit',score:80,reason:'AI developer tools is high-conviction theme'}],aiReasons:['30% MoM growth rate is exceptional for EdTech SaaS at Seed','IDE integration creates powerful daily-use habit formation','Developer tools show strongest NPS in consumer software category','Clear enterprise expansion path through team and org licensing']},
-  {id:'pulsehealth',name:'PulseHealth',tagline:'Continuous cardiac monitoring for at-risk patients at home',sector:'HealthTech',stage:'Series A',location:'Chicago, IL',arr:'$1.2M',arrRaw:1200000,growth:'16% MoM',growthRaw:16,seeking:'$10M',seekingRaw:10000000,score:70,team:41,description:"PulseHealth's wearable + AI platform continuously monitors cardiac patients at home, detecting anomalies and alerting care teams in real-time. FDA 510(k) cleared. Partnered with 12 major hospital networks.",aiInsight:'FDA clearance and hospital partnerships are strong validation signals. HealthTech with recurring SaaS model is attractive.',factors:[{name:'Stage Fit',score:72,reason:'Series A — within fund stage range'},{name:'Sector Alignment',score:82,reason:'HealthTech with strong clinical validation'},{name:'Check Size',score:78,reason:'$10M ask is manageable'},{name:'Geography',score:68,reason:'Chicago is growing health-tech hub'},{name:'Thematic Fit',score:75,reason:'Remote patient monitoring is major macro trend'}],aiReasons:['FDA 510(k) clearance significantly de-risks regulatory path','12 hospital network partnerships create strong distribution moat','Aging demographics drive structural demand for home cardiac monitoring','Recurring SaaS + device model generates high LTV per patient']},
-  {id:'agroai',name:'AgroAI',tagline:'Precision agriculture intelligence for mid-size farms',sector:'SaaS',stage:'Seed',location:'Des Moines, IA',arr:'$410K',arrRaw:410000,growth:'12% MoM',growthRaw:12,seeking:'$3.5M',seekingRaw:3500000,score:61,team:11,description:'AgroAI combines satellite imagery, IoT soil sensors, and weather data to give mid-size farms actionable insights on planting, irrigation, and harvesting — delivered via a mobile app with offline-first architecture.',aiInsight:'AgTech is niche but growing. 12% MoM is decent for the vertical. Geography and sector are outside core thesis but team quality is high.',factors:[{name:'Stage Fit',score:85,reason:'Seed stage is ideal entry point'},{name:'Sector Alignment',score:50,reason:'AgTech SaaS is outside core sectors'},{name:'Check Size',score:82,reason:'$3.5M is within check range'},{name:'Geography',score:45,reason:'Midwest geography is outside typical focus'},{name:'Thematic Fit',score:55,reason:'AgTech is adjacent but not primary thesis'}],aiReasons:['Offline-first architecture solves real connectivity pain for rural customers','Regulatory push for precision agriculture creates favorable tailwinds','Team has strong agronomy + ML domain expertise combination','Expansion opportunity in South America and Southeast Asia is large']},
-  {id:'greengrid',name:'GreenGrid',tagline:'Smart energy management for industrial facilities',sector:'CleanTech',stage:'Series A',location:'Denver, CO',arr:'$3.84M',arrRaw:3840000,growth:'15% MoM',growthRaw:15,seeking:'$25M',seekingRaw:25000000,score:52,team:52,description:'GreenGrid deploys AI-driven energy management systems in large industrial facilities, reducing energy costs by 25-40% and enabling compliance with new EPA industrial efficiency standards.',aiInsight:'Solid ARR and real impact metrics, but $25M ask exceeds typical check size. CleanTech is not a core thesis sector.',factors:[{name:'Stage Fit',score:55,reason:'Series A at $25M is above typical entry'},{name:'Sector Alignment',score:40,reason:'CleanTech is outside core thesis'},{name:'Check Size',score:30,reason:'$25M significantly exceeds check range'},{name:'Geography',score:65,reason:'Denver is emerging tech market'},{name:'Thematic Fit',score:60,reason:'Industrial AI is adjacent to thesis'}],aiReasons:['Strong $3.84M ARR but check size mismatch with fund strategy','CleanTech hardware + software stack creates higher capital intensity','EPA regulation tailwind is real but execution risk is elevated','Better fit as co-investment with specialized climate fund']}
+  {
+    id:'neurallend',name:'NeuralLend',tagline:'AI credit underwriting for underserved SMBs',
+    sector:'FinTech',stage:'Seed',location:'San Francisco, CA',
+    arr:'$420K',arrRaw:420000,growth:'19% MoM',growthRaw:19,
+    seeking:'$3.1M',seekingRaw:3100000,score:91,team:14,
+    description:'NeuralLend applies large language models to alternative credit data — cash flow patterns, invoicing history, and supply chain signals — to underwrite SMB loans 10x faster than traditional banks. Serving 340 small businesses across 8 states with a 2.1% default rate vs 6.8% industry average.',
+    aiInsight:'ARR of $420K exceeds 2024 Seed median ($363K per SVB). 19% MoM growth at Seed is top-decile for FinTech. Default rate of 2.1% vs 6.8% industry avg is a compelling moat signal. FinTech Series A median ARR is $4M — strong trajectory toward a premium raise.',
+    factors:[
+      {name:'Stage Fit',score:95,reason:'Seed — 2024 median deal $3.1M (KPMG Venture Pulse Q4 2024)'},
+      {name:'Sector Alignment',score:96,reason:'FinTech is core thesis; AI lending is top-5 FinTech sub-sector by deal count (CB Insights Q4 2024)'},
+      {name:'Check Size',score:92,reason:'$3.1M matches 2024 US Seed median exactly'},
+      {name:'Geography',score:85,reason:'SF Bay Area — $90B in VC deployed in 2024 (Crunchbase EOY)'},
+      {name:'Thematic Fit',score:94,reason:'AI credit = 47.2% of US VC is AI-driven (KPMG 2024); alternative lending is structural trend'}
+    ],
+    aiReasons:[
+      'ARR $420K exceeds 2024 Seed stage median of $363K (SVB State of Markets 2025)',
+      '19% MoM growth is top-decile for FinTech at Seed — 3:1 seed-to-Series A funnel makes this a standout',
+      '2.1% default rate vs 6.8% industry avg is a defensible, measurable moat',
+      'FinTech Series A median ARR is $4.0M — on trajectory to command $40M+ pre-money valuation'
+    ]
+  },
+  {
+    id:'stackguard',name:'StackGuard',tagline:'Automated Kubernetes security for cloud-native teams',
+    sector:'Cybersecurity',stage:'Seed',location:'Austin, TX',
+    arr:'$580K',arrRaw:580000,growth:'22% MoM',growthRaw:22,
+    seeking:'$4.2M',seekingRaw:4200000,score:88,team:16,
+    description:'StackGuard continuously red-teams Kubernetes clusters, auto-detecting misconfigurations and privilege escalation paths before attackers do. Deployed in 60+ engineering teams. Zero-trust posture reports generated in under 5 minutes vs 3-week manual audits.',
+    aiInsight:'580K ARR at Seed with 22% MoM is exceptional. Kubernetes security market growing 28% CAGR — comparable to KTrust ($8M Seed, 2024). $4.2M ask is 35% above 2024 Seed median, justified by above-median traction.',
+    factors:[
+      {name:'Stage Fit',score:90,reason:'Seed — $4.2M ask is 35% above 2024 median, supported by strong metrics'},
+      {name:'Sector Alignment',score:94,reason:'Cybersecurity is #4 sector by global VC deal count (CB Insights State of Venture Q4 2024)'},
+      {name:'Check Size',score:86,reason:'Slightly above $3.1M Seed median; justified by $580K ARR'},
+      {name:'Geography',score:88,reason:'Austin VC ecosystem grew 34% YoY in deal volume (PitchBook 2024)'},
+      {name:'Thematic Fit',score:92,reason:'Cloud-native security is #1 enterprise IT priority; Gartner Magic Quadrant segment'}
+    ],
+    aiReasons:[
+      '$580K ARR is 60% above 2024 US Seed stage median — top-quartile traction',
+      '22% MoM growth: at this rate, reaches $2.5M ARR (Series A bar) in ~7 months',
+      'Kubernetes security TAM: $6.2B by 2028 at 28% CAGR (MarketsandMarkets 2024)',
+      'Comparable: KTrust raised $8M Seed in 2024 on similar thesis — market validation'
+    ]
+  },
+  {
+    id:'flowops',name:'FlowOps',tagline:'Revenue operations automation for B2B SaaS teams',
+    sector:'SaaS',stage:'Seed',location:'New York, NY',
+    arr:'$550K',arrRaw:550000,growth:'20% MoM',growthRaw:20,
+    seeking:'$3.5M',seekingRaw:3500000,score:86,team:13,
+    description:'FlowOps unifies CRM, billing, and product usage data into a single RevOps command center. AI surfaces churn risk, upsell signals, and pipeline gaps — replacing 3-4 point tools for fast-growing SaaS companies. 55 customers, NRR 138%.',
+    aiInsight:'NRR of 138% is top-decile for B2B SaaS at Seed stage. Enterprise software VC investment was +43% YoY in 2024 (SVB). $550K ARR and 20% MoM positions FlowOps well above the 2024 Seed median.',
+    factors:[
+      {name:'Stage Fit',score:92,reason:'Seed — $3.5M ask is 13% above 2024 median, well-supported by metrics'},
+      {name:'Sector Alignment',score:90,reason:'Enterprise SaaS — US VC investment +43% YoY in 2024 (SVB State of Markets)'},
+      {name:'Check Size',score:88,reason:'$3.5M is within standard Seed range; median is $3.1M (KPMG Q4 2024)'},
+      {name:'Geography',score:82,reason:'NYC is #2 US VC market; strong SaaS GTM talent pool'},
+      {name:'Thematic Fit',score:87,reason:'RevOps automation is high-conviction theme; 1 in 6 enterprise SaaS deals now involve AI/ML (SVB 2025)'}
+    ],
+    aiReasons:[
+      'NRR 138% is top-decile for B2B SaaS — indicates strong product-market fit and expansion revenue',
+      'Enterprise software VC was +43% YoY in 2024 (SVB State of Markets 2025)',
+      '$550K ARR is 51% above 2024 Seed median of $363K',
+      '20% MoM growth: on trajectory for Series A at $2.5M ARR in ~6 months'
+    ]
+  },
+  {
+    id:'shaped-ai',name:'Shaped AI',tagline:'Real-time recommendation engine for product-led SaaS',
+    sector:'AI/ML',stage:'Seed',location:'San Francisco, CA',
+    arr:'$480K',arrRaw:480000,growth:'28% MoM',growthRaw:28,
+    seeking:'$3.8M',seekingRaw:3800000,score:84,team:11,
+    description:'Shaped AI provides a real-time, model-less recommendation API that product teams deploy in hours, not months. Learns from user behavior signals to personalize feeds, search rankings, and notifications. Used by 40+ product teams at Series A–C SaaS companies.',
+    aiInsight:'AI/ML was 47.2% of all US VC deal value in 2024 (KPMG). 28% MoM at Seed is exceptional — top-5% of deals in its cohort. API-first, model-less positioning reduces implementation friction significantly.',
+    factors:[
+      {name:'Stage Fit',score:88,reason:'Seed — $3.8M is 23% above 2024 median; justified by 28% MoM growth'},
+      {name:'Sector Alignment',score:92,reason:'AI/ML = 47.2% of US VC deal value in 2024; #1 investment theme (KPMG Venture Pulse)'},
+      {name:'Check Size',score:84,reason:'$3.8M is above median but within standard range for high-growth AI Seed rounds'},
+      {name:'Geography',score:88,reason:'SF Bay Area: $90B deployed in 2024, deepest AI talent pool globally'},
+      {name:'Thematic Fit',score:90,reason:'Infrastructure AI layer — strong defensibility; /dev/agents raised $56M Seed in Q4 2024 on similar thesis'}
+    ],
+    aiReasons:[
+      '28% MoM growth at Seed is top-5% of 2024 US Seed cohort — exceptional outlier',
+      'AI/ML infrastructure is most-funded sub-sector: >$100B globally, +80% YoY (Crunchbase EOY 2024)',
+      'API-first, zero-model architecture creates best-in-class time-to-value vs MLflow or custom pipelines',
+      'ICP is Series A-C SaaS — well-funded, high retention, strong ability to pay'
+    ]
+  },
+  {
+    id:'careroute',name:'CareRoute AI',tagline:'AI care navigation — right specialist, right time',
+    sector:'HealthTech',stage:'Series A',location:'Boston, MA',
+    arr:'$2.9M',arrRaw:2900000,growth:'15% MoM',growthRaw:15,
+    seeking:'$12.4M',seekingRaw:12400000,score:81,team:32,
+    description:'CareRoute AI reduces specialist wait times from 3 weeks to under 48 hours by intelligently matching patients to the right providers using clinical history, insurance, and real-time availability data. Integrated with 180+ hospital systems. FDA Class II software approved.',
+    aiInsight:'$2.9M ARR exceeds 2024 Series A median of $2.5M (SVB). $12.4M ask matches 2024 US Series A median exactly (KPMG). FDA approval de-risks regulatory execution. HealthTech VC was stable at $29B globally in 2024 (CB Insights).',
+    factors:[
+      {name:'Stage Fit',score:84,reason:'Series A — $12.4M ask matches 2024 US median exactly (KPMG Venture Pulse Q4 2024)'},
+      {name:'Sector Alignment',score:86,reason:'HealthTech = $29B global VC in 2024; AI care navigation is priority sub-sector (CB Insights)'},
+      {name:'Check Size',score:90,reason:'$12.4M is precisely the 2024 US Series A median — ideal sizing'},
+      {name:'Geography',score:82,reason:'Boston is #1 HealthTech hub; Mass General, Partners HealthCare as strategic validators'},
+      {name:'Thematic Fit',score:83,reason:'Care navigation AI directly addresses CMS interoperability mandates and staffing shortage'}
+    ],
+    aiReasons:[
+      '$2.9M ARR exceeds 2024 Series A median of $2.5M (SVB State of Markets 2025)',
+      '180+ hospital integrations create high switching costs and network effects',
+      'FDA Class II software clearance de-risks largest Series A concern in HealthTech',
+      '$12.4M ask matches 2024 Series A median — clean valuation story at ~$40M pre-money'
+    ]
+  },
+  {
+    id:'medpulse',name:'MedPulse',tagline:'Predictive readmission AI for hospital care teams',
+    sector:'HealthTech',stage:'Seed',location:'Chicago, IL',
+    arr:'$280K',arrRaw:280000,growth:'12% MoM',growthRaw:12,
+    seeking:'$3.0M',seekingRaw:3000000,score:71,team:10,
+    description:'MedPulse uses ML models trained on EHR data to predict 30-day readmission risk for cardiac and sepsis patients with 89% accuracy vs 63% for standard LACE scores. Hospital clients pay $180K/yr per facility. Currently in 8 hospitals across the Midwest.',
+    aiInsight:'$280K ARR is below 2024 Seed median ($363K). Growth rate of 12% MoM is solid but below top-quartile. Hospital sales cycles are 9-18 months — slower ARR velocity is expected. HealthTech VC remained stable but below AI/FinTech in deal count (CB Insights Q4 2024).',
+    factors:[
+      {name:'Stage Fit',score:80,reason:'Seed — $3.0M ask is near 2024 median; ARR below median at $280K'},
+      {name:'Sector Alignment',score:80,reason:'HealthTech — $29B global in 2024; below AI/FinTech in deal flow priority'},
+      {name:'Check Size',score:82,reason:'$3.0M is at the 2024 Seed median — clean ask'},
+      {name:'Geography',score:62,reason:'Chicago is growing HealthTech hub, but below Boston/SF in deal density'},
+      {name:'Thematic Fit',score:74,reason:'Hospital AI is regulated and slow-moving; CMS value-based care mandates are a long-term tailwind'}
+    ],
+    aiReasons:[
+      '89% readmission prediction accuracy vs 63% LACE baseline is a strong clinical validation',
+      '$180K/yr per-facility ACV suggests $1.44M ARR potential from current 8 clients at full contract',
+      'Hospital sales cycles average 12–18 months — current ARR understates product traction',
+      '12% MoM is below Series A bar; needs 3–4 more hospital wins before optimal raise timing'
+    ]
+  },
+  {
+    id:'greenledger',name:'GreenLedger',tagline:'AI carbon accounting for mid-market enterprises',
+    sector:'CleanTech',stage:'Seed',location:'Denver, CO',
+    arr:'$340K',arrRaw:340000,growth:'14% MoM',growthRaw:14,
+    seeking:'$2.8M',seekingRaw:2800000,score:63,team:9,
+    description:'GreenLedger automates Scope 1, 2, and 3 emissions tracking for mid-market companies, replacing 6-month manual spreadsheet processes with real-time dashboards. Helps clients prepare for SEC climate disclosure rules effective 2026.',
+    aiInsight:'CleanTech VC reached a record $7.6B in the US in 2024 (SVB), with 75% of deals at Seed/Series A. $2.8M ask is below 2024 Seed median, reflecting early ARR. SEC climate disclosure mandate is a real catalyst but creates compliance-driven buying — slower than product-led growth.',
+    factors:[
+      {name:'Stage Fit',score:78,reason:'Seed — $2.8M ask is 10% below 2024 median; modest ARR of $340K'},
+      {name:'Sector Alignment',score:55,reason:'CleanTech is outside core FinTech/SaaS/AI thesis — US CleanTech VC record $7.6B in 2024 but specialist sector'},
+      {name:'Check Size',score:80,reason:'$2.8M is below $3.1M median — conservative ask, appropriate for stage'},
+      {name:'Geography',score:66,reason:'Denver emerging as CleanTech hub; below SF/Austin/NYC in deal density'},
+      {name:'Thematic Fit',score:60,reason:'SEC climate disclosure rules (effective 2026) are catalyst but compliance buying is slower than product-led'}
+    ],
+    aiReasons:[
+      'SEC climate disclosure mandate effective 2026 creates structural urgency for 10,000+ mid-market companies',
+      'CleanTech VC hit record $7.6B in US in 2024, 75% at Seed/Series A — active market (SVB 2025)',
+      '$340K ARR is slightly below 2024 Seed median; 14% MoM is solid for regulatory-driven SaaS',
+      'Outside core thesis sectors — better as a strategic reserve position or co-investment'
+    ]
+  },
+  {
+    id:'vertexiq',name:'VertexIQ',tagline:'AI competitive intelligence for enterprise sales teams',
+    sector:'AI/ML',stage:'Pre-Seed',location:'New York, NY',
+    arr:'$85K',arrRaw:85000,growth:'35% MoM',growthRaw:35,
+    seeking:'$1.2M',seekingRaw:1200000,score:57,team:5,
+    description:'VertexIQ monitors competitor pricing, product updates, job postings, and press in real time, surfacing actionable battlecards and alerts to enterprise sales reps. Currently 22 paying customers, all acquired via founder-led outbound.',
+    aiInsight:'35% MoM growth at Pre-Seed is a strong signal, but $85K ARR and 5-person team represent very early stage. 2024 US Pre-Seed median is $700K (KPMG). $1.2M ask is above median at this stage. AI/ML sub-sector tailwind is strong but competitive intelligence is a crowded space.',
+    factors:[
+      {name:'Stage Fit',score:50,reason:'Pre-Seed — $1.2M ask is 71% above 2024 US Pre-Seed median of $700K (KPMG Q4 2024)'},
+      {name:'Sector Alignment',score:80,reason:'AI/ML — aligns with 47.2% AI share of US VC (KPMG); but competitive intelligence is crowded'},
+      {name:'Check Size',score:48,reason:'$1.2M ask is 71% above 2024 Pre-Seed median — high relative ask for $85K ARR'},
+      {name:'Geography',score:75,reason:'NYC is strong for enterprise SaaS GTM; solid access to enterprise sales customers'},
+      {name:'Thematic Fit',score:65,reason:'AI sales intelligence is a real theme but Gong, Clari, Crayon already well-funded competitors'}
+    ],
+    aiReasons:[
+      '35% MoM growth at Pre-Seed is exceptional — top 5% of early-stage cohort',
+      '$85K ARR with 22 customers = $3.9K ACV — will need significant price increase to reach Series A bar',
+      'Competing against Crayon ($74M raised), Klue ($62M raised), Battlecards.io — significant incumbent risk',
+      'Pre-Seed to Seed conversion bottleneck: 2024 Seed funding hit multi-year low of $7B in Q4 (Crunchbase)'
+    ]
+  }
 ];
 const MOCK_DEALS = [
-  {id:'d1',company:'FinFlow AI',stage:'Due Diligence',assignee:'Jennifer Smith',date:'2026-03-18',score:85},
-  {id:'d2',company:'MedMatch',stage:'Term Sheet',assignee:'Michael Chen',date:'2026-03-15',score:79},
-  {id:'d3',company:'DataVault',stage:'Reviewing',assignee:'Jennifer Smith',date:'2026-03-17',score:91},
-  {id:'d4',company:'CodeMentor AI',stage:'New',assignee:'Alex Rodriguez',date:'2026-03-18',score:76}
+  {id:'d1',company:'StackGuard',stage:'Due Diligence',assignee:'Jennifer Smith',date:'2026-03-20',note:'Strong Seed metrics. Cybersecurity thesis fit. Waiting on pen test audit results.',score:88},
+  {id:'d2',company:'NeuralLend',stage:'Term Sheet',assignee:'Michael Chen',date:'2026-03-17',note:'Exceptional default rate vs industry. Negotiating $13.5M pre-money vs founder ask of $16M.',score:91},
+  {id:'d3',company:'FlowOps',stage:'Reviewing',assignee:'Jennifer Smith',date:'2026-03-19',note:'NRR 138% is standout. Need Q1 cohort retention data before proceeding.',score:86},
+  {id:'d4',company:'Shaped AI',stage:'New',assignee:'Alex Rodriguez',date:'2026-03-21',note:'28% MoM growth — top-decile for AI Seed cohort. First call went well.',score:84}
 ];
 
 // ── State ──────────────────────────────────────────────────────────────────
