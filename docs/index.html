@@ -332,19 +332,41 @@ input,textarea,select{font-family:var(--font)}
 <!-- API Key Modal -->
 <div id="api-key-modal" class="modal-overlay hidden">
   <div class="modal-box">
-    <div class="modal-title">🔑 Enter Anthropic API Key</div>
-    <div class="modal-desc">Your key is stored locally in your browser and only sent directly to Anthropic's API — never to any third-party server.</div>
-    <div class="form-group">
-      <label>API Key</label>
-      <input id="api-key-input" type="password" placeholder="sk-ant-api03-..." style="font-family:monospace;font-size:12px;"/>
+    <div class="modal-title">🔑 Configure AI Provider</div>
+    <div class="modal-desc">Keys are stored locally in your browser and sent only to the selected provider — never to any third-party server.</div>
+
+    <!-- Provider toggle -->
+    <div style="display:flex;gap:8px;margin-bottom:18px;">
+      <button id="tab-anthropic" class="btn btn-blue btn-sm" style="flex:1;" onclick="switchProviderTab('anthropic')">Anthropic</button>
+      <button id="tab-openai" class="btn btn-outline btn-sm" style="flex:1;" onclick="switchProviderTab('openai')">OpenAI</button>
     </div>
+
+    <!-- Anthropic -->
+    <div id="provider-anthropic">
+      <div class="form-group">
+        <label>Anthropic API Key</label>
+        <input id="api-key-anthropic" type="password" placeholder="sk-ant-api03-..." style="font-family:monospace;font-size:12px;"/>
+      </div>
+      <p style="font-size:11px;color:var(--gray-400);margin-top:8px;">
+        Model: <strong>claude-sonnet-4-6</strong> · Get key at <a href="https://console.anthropic.com" target="_blank" style="color:var(--blue-600);">console.anthropic.com</a>
+      </p>
+    </div>
+
+    <!-- OpenAI -->
+    <div id="provider-openai" style="display:none;">
+      <div class="form-group">
+        <label>OpenAI API Key</label>
+        <input id="api-key-openai" type="password" placeholder="sk-proj-..." style="font-family:monospace;font-size:12px;"/>
+      </div>
+      <p style="font-size:11px;color:var(--gray-400);margin-top:8px;">
+        Model: <strong>gpt-4o</strong> · Get key at <a href="https://platform.openai.com/api-keys" target="_blank" style="color:var(--blue-600);">platform.openai.com</a>
+      </p>
+    </div>
+
     <div style="display:flex;gap:8px;margin-top:16px;">
       <button class="btn btn-primary btn-full" onclick="saveApiKey()">Save & Continue</button>
       <button class="btn btn-outline" onclick="closeApiKeyModal()">Cancel</button>
     </div>
-    <p style="font-size:11px;color:var(--gray-400);margin-top:12px;text-align:center;">
-      Get your API key at <a href="https://console.anthropic.com" target="_blank" style="color:var(--blue-600);">console.anthropic.com</a>
-    </p>
   </div>
 </div>
 
@@ -898,38 +920,65 @@ function progressClass(n){return n>=80?'progress-fill-green':n>=60?'progress-fil
 
 // ── API Key ────────────────────────────────────────────────────────────────
 let _pendingApiResolve=null;
+let _activeProvider=localStorage.getItem('agenticfa_provider')||'anthropic';
+
+function switchProviderTab(p){
+  _activeProvider=p;
+  document.getElementById('provider-anthropic').style.display=p==='anthropic'?'':'none';
+  document.getElementById('provider-openai').style.display=p==='openai'?'':'none';
+  const ta=document.getElementById('tab-anthropic');
+  const to=document.getElementById('tab-openai');
+  ta.className='btn btn-sm'+(p==='anthropic'?' btn-blue':' btn-outline');ta.style.flex='1';
+  to.className='btn btn-sm'+(p==='openai'?' btn-blue':' btn-outline');to.style.flex='1';
+}
 function showApiKeyModal(){
-  const m=document.getElementById('api-key-modal');
-  m.classList.remove('hidden');
-  const inp=document.getElementById('api-key-input');
-  const stored=localStorage.getItem('agenticfa_api_key')||'';
-  inp.value=stored;
-  inp.focus();
+  document.getElementById('api-key-modal').classList.remove('hidden');
+  document.getElementById('api-key-anthropic').value=localStorage.getItem('agenticfa_api_key')||'';
+  document.getElementById('api-key-openai').value=localStorage.getItem('agenticfa_openai_key')||'';
+  switchProviderTab(_activeProvider);
 }
 function closeApiKeyModal(){
   document.getElementById('api-key-modal').classList.add('hidden');
   if(_pendingApiResolve){_pendingApiResolve(null);_pendingApiResolve=null;}
 }
 function saveApiKey(){
-  const key=document.getElementById('api-key-input').value.trim();
-  if(!key){alert('Please enter a valid API key.');return;}
-  localStorage.setItem('agenticfa_api_key',key);
+  const ant=document.getElementById('api-key-anthropic').value.trim();
+  const oai=document.getElementById('api-key-openai').value.trim();
+  if(!ant&&!oai){alert('Please enter at least one API key.');return;}
+  if(ant)localStorage.setItem('agenticfa_api_key',ant);
+  if(oai)localStorage.setItem('agenticfa_openai_key',oai);
+  localStorage.setItem('agenticfa_provider',_activeProvider);
   document.getElementById('api-key-modal').classList.add('hidden');
-  if(_pendingApiResolve){_pendingApiResolve(key);_pendingApiResolve=null;}
+  if(_pendingApiResolve){_pendingApiResolve(true);_pendingApiResolve=null;}
 }
 function getApiKey(){
   return new Promise(resolve=>{
-    const k=localStorage.getItem('agenticfa_api_key');
-    if(k){resolve(k);return;}
+    const ant=localStorage.getItem('agenticfa_api_key');
+    const oai=localStorage.getItem('agenticfa_openai_key');
+    if(ant||oai){resolve(true);return;}
     _pendingApiResolve=resolve;
     showApiKeyModal();
   });
 }
 
-// ── Claude API ─────────────────────────────────────────────────────────────
+// ── AI API (Anthropic or OpenAI) ───────────────────────────────────────────
 async function callClaude(systemPrompt,userMessage){
-  const apiKey=await getApiKey();
-  if(!apiKey)throw new Error('API key required');
+  await getApiKey();
+  const provider=localStorage.getItem('agenticfa_provider')||'anthropic';
+  if(provider==='openai'){
+    const apiKey=localStorage.getItem('agenticfa_openai_key');
+    if(!apiKey)throw new Error('OpenAI API key required. Click ⚙ to add it.');
+    const res=await fetch('https://api.openai.com/v1/chat/completions',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':`Bearer ${apiKey}`},
+      body:JSON.stringify({model:'gpt-4o',max_tokens:2048,messages:[{role:'system',content:systemPrompt},{role:'user',content:userMessage}]})
+    });
+    if(!res.ok){const e=await res.json().catch(()=>({}));throw new Error(e.error?.message||`OpenAI error ${res.status}`);}
+    const d=await res.json();
+    return d.choices[0].message.content;
+  }
+  const apiKey=localStorage.getItem('agenticfa_api_key');
+  if(!apiKey)throw new Error('Anthropic API key required. Click ⚙ to add it.');
   const res=await fetch('https://api.anthropic.com/v1/messages',{
     method:'POST',
     headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
@@ -1240,7 +1289,8 @@ document.addEventListener('DOMContentLoaded',()=>{
   document.querySelectorAll('.nav-item').forEach(el=>{el.addEventListener('click',()=>{const v=el.dataset.view;if(v)navigateTo(v);});});
   document.querySelectorAll('.mobile-nav-item').forEach(el=>{el.addEventListener('click',()=>{const v=el.dataset.view;if(v)navigateTo(v);});});
   document.querySelectorAll('.tab-btn[data-tab]').forEach(btn=>{btn.addEventListener('click',()=>{state.matchesTab=btn.dataset.tab;document.querySelectorAll('.tab-btn[data-tab]').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderMatches();});});
-  document.getElementById('api-key-input').addEventListener('keydown',e=>{if(e.key==='Enter')saveApiKey();});
+  document.getElementById('api-key-anthropic').addEventListener('keydown',e=>{if(e.key==='Enter')saveApiKey();});
+  document.getElementById('api-key-openai').addEventListener('keydown',e=>{if(e.key==='Enter')saveApiKey();});
   navigateTo('dashboard');
 });
 </script>
