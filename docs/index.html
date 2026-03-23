@@ -1058,7 +1058,7 @@ function renderDealFlow(){
         <p>${esc(s.aiInsight)}</p>
       </div>
       <div class="sc-actions">
-        <button class="btn btn-outline btn-sm" style="flex:1" onclick="window.open('${esc(s.url||'#')}','_blank')">View Details</button>
+        <a class="btn btn-outline btn-sm" style="flex:1;text-decoration:none;" href="${s.url||'#'}" target="_blank" rel="noopener noreferrer">View Details</a>
         <button class="btn btn-primary btn-sm" style="flex:1">Add to Pipeline</button>
       </div>
     </div>`).join('');
